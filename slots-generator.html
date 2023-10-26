@@ -43,6 +43,8 @@
 
         <h2>Selected Items:</h2>
         <ul id="selected-list"></ul>
+
+        <button id="add-selected-button">+</button>
     </div>
 
     <button onclick="goBack()">Go Back</button>
@@ -95,6 +97,33 @@
                     listItem.appendChild(removeButton);
                     generatedList.appendChild(listItem);
                 }
+            }
+        });
+
+        document.getElementById('add-selected-button').addEventListener('click', function () {
+            const selectedList = document.getElementById('selected-list');
+            const selectedItems = selectedList.getElementsByTagName('li');
+            if (selectedItems.length > 0) {
+                const randomIndex = Math.floor(Math.random() * selectedItems.length);
+                const randomItem = selectedItems[randomIndex];
+
+                // Remove the item from the selected list
+                selectedList.removeChild(randomItem);
+
+                // Create a new item in the generated list
+                const generatedList = document.getElementById('generated-list');
+                const listItem = document.createElement('li');
+                listItem.textContent = randomItem.textContent;
+                const removeButton = document.createElement('button');
+                removeButton.textContent = '-';
+                removeButton.addEventListener('click', function () {
+                    // Remove the item from generated list
+                    generatedList.removeChild(listItem);
+                    // Move the item to the selected list
+                    selectedList.appendChild(listItem);
+                });
+                listItem.appendChild(removeButton);
+                generatedList.appendChild(listItem);
             }
         });
 
