@@ -33,8 +33,6 @@
             <input type="checkbox" id="list7-checkbox"> Quickspin
         </label>
 
-        <button id="generate-button">Generate</button>
-
         <h2>Generate Random Items:</h2>
         <label for="num-items">Number of Items:</label>
         <input type="number" id="num-items" min="1" value="1">
@@ -65,11 +63,19 @@
             const generatedList = document.getElementById('generated-list');
             generatedList.innerHTML = ''; // Clear previous items
 
+            const selectedLists = [];
             for (let i = 0; i < checkboxes.length; i++) {
                 if (checkboxes[i].checked) {
                     const list = await loadList(`list${i + 1}.txt`);
-                    const randomIndex = Math.floor(Math.random() * list.length);
-                    const randomItem = list[randomIndex];
+                    selectedLists.push(...list);
+                }
+            }
+
+            const numItems = parseInt(document.getElementById('num-items').value);
+            for (let i = 0; i < numItems; i++) {
+                if (selectedLists.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * selectedLists.length);
+                    const randomItem = selectedLists[randomIndex];
 
                     const listItem = document.createElement('li');
                     listItem.textContent = `Random Number: ${randomIndex}, Item: ${randomItem}`;
