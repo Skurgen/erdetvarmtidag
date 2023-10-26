@@ -40,6 +40,9 @@
 
         <h2>Generated Items:</h2>
         <ul id="generated-list"></ul>
+
+        <h2>Selected Items:</h2>
+        <ul id="selected-list"></ul>
     </div>
 
     <button onclick="goBack()">Go Back</button>
@@ -61,7 +64,9 @@
             ];
 
             const generatedList = document.getElementById('generated-list');
-            generatedList.innerHTML = ''; // Clear previous items
+            const selectedList = document.getElementById('selected-list');
+            generatedList.innerHTML = ''; // Clear previous generated items
+            selectedList.innerHTML = ''; // Clear previous selected items
 
             const selectedLists = [];
             for (let i = 0; i < checkboxes.length; i++) {
@@ -78,7 +83,16 @@
                     const randomItem = selectedLists[randomIndex];
 
                     const listItem = document.createElement('li');
-                    listItem.textContent = `${randomItem}`;
+                    listItem.textContent = `Random Number: ${randomIndex}, Item: ${randomItem}`;
+                    const removeButton = document.createElement('button');
+                    removeButton.textContent = '-';
+                    removeButton.addEventListener('click', function () {
+                        // Remove the item from generated list
+                        generatedList.removeChild(listItem);
+                        // Move the item to the selected list
+                        selectedList.appendChild(listItem);
+                    });
+                    listItem.appendChild(removeButton);
                     generatedList.appendChild(listItem);
                 }
             }
