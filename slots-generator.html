@@ -114,7 +114,7 @@
                 document.getElementById('list5-checkbox'),
                 document.getElementById('list6-checkbox'),
                 document.getElementById('list7-checkbox')
-            ];
+            };
 
             for (let i = 0; i < checkboxes.length; i++) {
                 if (checkboxes[i].checked) {
@@ -136,7 +136,10 @@
         }
 
         document.getElementById('generate-button').addEventListener('click', function () {
-            generateRandomItem();
+            const numItems = parseInt(document.getElementById('num-items').value);
+            for (let i = 0; i < numItems; i++) {
+                generateRandomItem();
+            }
         });
 
         document.getElementById('add-selected-button').addEventListener('click', function () {
@@ -147,4 +150,21 @@
                 const randomItem = selectedItems[randomIndex];
                 moveItemToGeneratedList(randomItem);
             }
-       
+        });
+
+        async function loadList(filename) {
+            try {
+                const response = await fetch(filename);
+                if (!response.ok) {
+                    throw new Error('File not found');
+                }
+                const text = await response.text();
+                return text.split('\n').filter(item => item.trim() !== ''); // Split by newline and remove empty lines
+            } catch (error) {
+                console.error('Error loading the file:', error);
+                return [];
+            }
+        }
+    </script>
+</body>
+</html>
