@@ -47,3 +47,9 @@ button {
 button:hover {
     background-color: #0056b3;
 }
+#moving-image {
+    position: absolute;
+    top: 0;
+    left: 100%; /* Start off-screen to the right */
+    transition: left 5s linear; /* Use CSS transition for smooth movement */
+}

@@ -10,21 +10,39 @@ document.addEventListener('DOMContentLoaded', function() {
     const results = ["Ja", "Nej"];
     let spinning = false;
 
+    // Get the audio element
+    const audio = document.getElementById('background-music');
+
+    // Get the image element
+    const movingImage = document.getElementById('moving-image');
+
     generatorButton.addEventListener('click', function () {
-            
-            window.location.href = 'slots-generator.html';
-});
+        // Redirect to the slots generator
+        window.location.href = 'slots-generator.html';
+    });
+
     spinButton.addEventListener('click', function() {
         if (spinning) return;
 
         spinning = true;
         spinButton.disabled = true;
 
-        const spinDuration = 2000; // Duration of the spinning animation in milliseconds
+        // Start playing the background music
+        audio.play();
+
+        const spinDuration = 5000; // Extend the duration to 5 seconds
         const startTime = Date.now();
+        const initialPosition = window.innerWidth; // Initial position of the image (off-screen to the right)
 
         function spin() {
-            if (Date.now() - startTime < spinDuration) {
+            const currentTime = Date.now() - startTime;
+            if (currentTime < spinDuration) {
+                // Calculate the position of the image as it moves from right to left
+                const imagePosition = initialPosition - (currentTime / spinDuration) * initialPosition;
+
+                // Set the position of the image
+                movingImage.style.left = imagePosition + 'px';
+
                 slots.forEach(slot => {
                     const randomResult = results[Math.floor(Math.random() * results.length)];
                     slot.textContent = randomResult;
@@ -37,6 +55,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 spinning = false;
                 spinButton.disabled = false;
+
+                // Stop the background music when the spinning is done
+                audio.pause();
+
+                // Reset the image position
+                movingImage.style.left = initialPosition + 'px';
             }
         }
 
