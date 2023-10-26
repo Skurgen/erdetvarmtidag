@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -60,7 +60,7 @@
             window.history.back();
         }
 
-        function createItemControls(listItem, listName) {
+        function createItemControls(listItem) {
             const removeButton = document.createElement('button');
             removeButton.textContent = '-';
             removeButton.className = 'item-controls-button';
@@ -114,25 +114,22 @@
                 document.getElementById('list5-checkbox'),
                 document.getElementById('list6-checkbox'),
                 document.getElementById('list7-checkbox')
-            ];
+            };
 
             for (let i = 0; i < checkboxes.length; i++) {
                 if (checkboxes[i].checked) {
                     const list = loadList(`list${i + 1}.txt`);
-                    const listName = checkboxes[i].nextElementSibling.textContent;
-                    selectedLists.push({ list, listName });
+                    selectedLists.push(...list);
                 }
             }
 
             if (selectedLists.length > 0) {
                 const randomIndex = Math.floor(Math.random() * selectedLists.length);
-                const selectedList = selectedLists[randomIndex];
-                const randomIndexInList = Math.floor(Math.random() * selectedList.list.length);
-                const randomItem = selectedList.list[randomIndexInList];
+                const randomItem = selectedLists[randomIndex];
 
                 const listItem = document.createElement('li');
                 listItem.textContent = `${selectedList.listName}: ${randomItem}`;
-                const itemControls = createItemControls(listItem, selectedList.listName);
+                const itemControls = createItemControls(listItem);
                 listItem.appendChild(itemControls);
                 generatedList.appendChild(listItem);
             }
