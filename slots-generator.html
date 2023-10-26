@@ -67,18 +67,20 @@
             for (let i = 0; i < checkboxes.length; i++) {
                 if (checkboxes[i].checked) {
                     const list = await loadList(`list${i + 1}.txt`);
-                    selectedLists.push(...list);
+                    selectedLists.push({ list, name: checkboxes[i].nextElementSibling.textContent });
                 }
             }
 
             const numItems = parseInt(document.getElementById('num-items').value);
             for (let i = 0; i < numItems; i++) {
                 if (selectedLists.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * selectedLists.length);
-                    const randomItem = selectedLists[randomIndex];
+                    const randomListIndex = Math.floor(Math.random() * selectedLists.length);
+                    const randomList = selectedLists[randomListIndex];
+                    const randomIndex = Math.floor(Math.random() * randomList.list.length);
+                    const randomItem = randomList.list[randomIndex];
 
                     const listItem = document.createElement('li');
-                    listItem.textContent = `${selectedLists.list}: ${randomItem}`;
+                    listItem.textContent = `${randomList.name}: ${randomItem}`;
                     generatedList.appendChild(listItem);
                 }
             }
