@@ -9,7 +9,34 @@
 <body>
     <div class="container">
         <h1>Slots Generator</h1>
-        <!-- Your Slots Generator content goes here -->
+
+        <h2>Select Items:</h2>
+        <label>
+            <input type="checkbox" id="list1-checkbox"> Hacksaw
+        </label>
+        <label>
+            <input type="checkbox" id="list2-checkbox"> Pragmatic
+        </label>
+        <label>
+            <input type="checkbox" id="list3-checkbox"> Play n' Go
+        </label>
+        <label>
+            <input type="checkbox" id="list4-checkbox"> Nolimit City
+        </label>
+        <label>
+            <input type="checkbox" id="list5-checkbox"> Thunderkick
+        </label>
+        <label>
+            <input type="checkbox" id="list6-checkbox"> Relax Gaming
+        </label>
+        <label>
+            <input type="checkbox" id="list7-checkbox"> Quickspin
+        </label>
+
+        <button id="generate-button">Generate</button>
+
+        <h2>Generated Items:</h2>
+        <ul id="generated-list"></ul>
     </div>
 
     <button onclick="goBack()">Go Back</button>
@@ -17,6 +44,46 @@
     <script>
         function goBack() {
             window.history.back();
+        }
+
+        document.getElementById('generate-button').addEventListener('click', async function () {
+            const checkboxes = [
+                document.getElementById('list1-checkbox'),
+                document.getElementById('list2-checkbox'),
+                document.getElementById('list3-checkbox'),
+                document.getElementById('list4-checkbox'),
+                document.getElementById('list5-checkbox'),
+                document.getElementById('list6-checkbox'),
+                document.getElementById('list7-checkbox')
+            ];
+
+            const generatedList = document.getElementById('generated-list');
+            generatedList.innerHTML = ''; // Clear previous items
+
+            for (let i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    const list = await loadList(`list${i + 1}.txt`);
+                    list.forEach(item => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = item;
+                        generatedList.appendChild(listItem);
+                    });
+                }
+            }
+        });
+
+        async function loadList(filename) {
+            try {
+                const response = await fetch(filename);
+                if (!response.ok) {
+                    throw new Error('File not found');
+                }
+                const text = await response.text();
+                return text.split('\n').filter(item => item.trim() !== ''); // Split by newline and remove empty lines
+            } catch (error) {
+                console.error('Error loading the file:', error);
+                return [];
+            }
         }
     </script>
 </body>
