@@ -60,13 +60,22 @@
             window.history.back();
         }
 
-        function createItemControls() {
+        function createItemControls(listItem) {
             const removeButton = document.createElement('button');
             removeButton.textContent = '-';
             removeButton.className = 'item-controls-button';
             removeButton.addEventListener('click', function () {
                 const listItem = this.parentElement;
-                listItem.parentElement.removeChild(listItem);
+                const generatedList = document.getElementById('generated-list');
+                const selectedList = document.getElementById('selected-list');
+                if (listItem.parentElement === generatedList) {
+                    // Remove the item from generated list and generate a new random item
+                    generatedList.removeChild(listItem);
+                    generateRandomItem();
+                } else if (listItem.parentElement === selectedList) {
+                    // Remove the item from selected list
+                    selectedList.removeChild(listItem);
+                }
             });
 
             const addButton = document.createElement('button');
@@ -94,7 +103,9 @@
             generatedList.appendChild(listItem);
         }
 
-        document.getElementById('generate-button').addEventListener('click', async function () {
+        function generateRandomItem() {
+            const generatedList = document.getElementById('generated-list');
+            const selectedLists = [];
             const checkboxes = [
                 document.getElementById('list1-checkbox'),
                 document.getElementById('list2-checkbox'),
@@ -105,32 +116,27 @@
                 document.getElementById('list7-checkbox')
             ];
 
-            const generatedList = document.getElementById('generated-list');
-            const selectedList = document.getElementById('selected-list');
-            generatedList.innerHTML = ''; // Clear previous generated items
-            selectedList.innerHTML = ''; // Clear previous selected items
-
-            const selectedLists = [];
             for (let i = 0; i < checkboxes.length; i++) {
                 if (checkboxes[i].checked) {
-                    const list = await loadList(`list${i + 1}.txt`);
+                    const list = loadList(`list${i + 1}.txt`);
                     selectedLists.push(...list);
                 }
             }
 
-            const numItems = parseInt(document.getElementById('num-items').value);
-            for (let i = 0; i < numItems; i++) {
-                if (selectedLists.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * selectedLists.length);
-                    const randomItem = selectedLists[randomIndex];
+            if (selectedLists.length > 0) {
+                const randomIndex = Math.floor(Math.random() * selectedLists.length);
+                const randomItem = selectedLists[randomIndex];
 
-                    const listItem = document.createElement('li');
-                    listItem.textContent = `Random Number: ${randomIndex}, Item: ${randomItem}`;
-                    const itemControls = createItemControls();
-                    listItem.appendChild(itemControls);
-                    generatedList.appendChild(listItem);
-                }
+                const listItem = document.createElement('li');
+                listItem.textContent = `Random Number: ${randomIndex}, Item: ${randomItem}`;
+                const itemControls = createItemControls(listItem);
+                listItem.appendChild(itemControls);
+                generatedList.appendChild(listItem);
             }
+        }
+
+        document.getElementById('generate-button').addEventListener('click', function () {
+            generateRandomItem();
         });
 
         document.getElementById('add-selected-button').addEventListener('click', function () {
@@ -141,21 +147,4 @@
                 const randomItem = selectedItems[randomIndex];
                 moveItemToGeneratedList(randomItem);
             }
-        });
-
-        async function loadList(filename) {
-            try {
-                const response = await fetch(filename);
-                if (!response.ok) {
-                    throw new Error('File not found');
-                }
-                const text = await response.text();
-                return text.split('\n').filter(item => item.trim() !== ''); // Split by newline and remove empty lines
-            } catch (error) {
-                console.error('Error loading the file:', error);
-                return [];
-            }
-        }
-    </script>
-</body>
-</html>
+       
