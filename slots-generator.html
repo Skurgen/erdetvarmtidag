@@ -35,6 +35,11 @@
 
         <button id="generate-button">Generate</button>
 
+        <h2>Generate Random Items:</h2>
+        <label for="num-items">Number of Items:</label>
+        <input type="number" id="num-items" min="1" value="1">
+        <button id="generate-button">Generate</button>
+
         <h2>Generated Items:</h2>
         <ul id="generated-list"></ul>
     </div>
@@ -63,11 +68,12 @@
             for (let i = 0; i < checkboxes.length; i++) {
                 if (checkboxes[i].checked) {
                     const list = await loadList(`list${i + 1}.txt`);
-                    list.forEach(item => {
-                        const listItem = document.createElement('li');
-                        listItem.textContent = item;
-                        generatedList.appendChild(listItem);
-                    });
+                    const randomIndex = Math.floor(Math.random() * list.length);
+                    const randomItem = list[randomIndex];
+
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `Random Number: ${randomIndex}, Item: ${randomItem}`;
+                    generatedList.appendChild(listItem);
                 }
             }
         });
