@@ -1,16 +1,10 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="slots-generator-styles.css">
     <title>Slots Generator</title>
-    <style>
-        .item-controls button {
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
@@ -46,11 +40,6 @@
 
         <h2>Generated Items:</h2>
         <ul id="generated-list"></ul>
-
-        <h2>Selected Items:</h2>
-        <ul id="selected-list"></ul>
-
-        <button id="add-selected-button">+</button>
     </div>
 
     <button onclick="goBack()">Go Back</button>
@@ -60,52 +49,7 @@
             window.history.back();
         }
 
-        function createItemControls(listItem) {
-            const removeButton = document.createElement('button');
-            removeButton.textContent = '-';
-            removeButton.className = 'item-controls-button';
-            removeButton.addEventListener('click', function () {
-                const listItem = this.parentElement;
-                const generatedList = document.getElementById('generated-list');
-                const selectedList = document.getElementById('selected-list');
-                if (listItem.parentElement === generatedList) {
-                    // Remove the item from generated list and generate a new random item
-                    generatedList.removeChild(listItem);
-                    generateRandomItem();
-                } else if (listItem.parentElement === selectedList) {
-                    // Remove the item from selected list
-                    selectedList.removeChild(listItem);
-                }
-            });
-
-            const addButton = document.createElement('button');
-            addButton.textContent = '+';
-            addButton.className = 'item-controls-button';
-            addButton.addEventListener('click', function () {
-                const listItem = this.parentElement;
-                moveItemToGeneratedList(listItem);
-            });
-
-            const itemControls = document.createElement('div');
-            itemControls.className = 'item-controls';
-            itemControls.appendChild(removeButton);
-            itemControls.appendChild(addButton);
-
-            return itemControls;
-        }
-
-        function moveItemToGeneratedList(listItem) {
-            const selectedList = document.getElementById('selected-list');
-            selectedList.removeChild(listItem);
-
-            const generatedList = document.getElementById('generated-list');
-            listItem.getElementsByClassName('item-controls')[0].remove();
-            generatedList.appendChild(listItem);
-        }
-
-        function generateRandomItem() {
-            const generatedList = document.getElementById('generated-list');
-            const selectedLists = [];
+        document.getElementById('generate-button').addEventListener('click', async function () {
             const checkboxes = [
                 document.getElementById('list1-checkbox'),
                 document.getElementById('list2-checkbox'),
@@ -114,41 +58,29 @@
                 document.getElementById('list5-checkbox'),
                 document.getElementById('list6-checkbox'),
                 document.getElementById('list7-checkbox')
-            };
+            ];
 
+            const generatedList = document.getElementById('generated-list');
+            generatedList.innerHTML = ''; // Clear previous items
+
+            const selectedLists = [];
             for (let i = 0; i < checkboxes.length; i++) {
                 if (checkboxes[i].checked) {
-                    const list = loadList(`list${i + 1}.txt`);
+                    const list = await loadList(`list${i + 1}.txt`);
                     selectedLists.push(...list);
                 }
             }
 
-            if (selectedLists.length > 0) {
-                const randomIndex = Math.floor(Math.random() * selectedLists.length);
-                const randomItem = selectedLists[randomIndex];
-
-                const listItem = document.createElement('li');
-                listItem.textContent = `${selectedList.listName}: ${randomItem}`;
-                const itemControls = createItemControls(listItem);
-                listItem.appendChild(itemControls);
-                generatedList.appendChild(listItem);
-            }
-        }
-
-        document.getElementById('generate-button').addEventListener('click', function () {
             const numItems = parseInt(document.getElementById('num-items').value);
             for (let i = 0; i < numItems; i++) {
-                generateRandomItem();
-            }
-        });
+                if (selectedLists.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * selectedLists.length);
+                    const randomItem = selectedLists[randomIndex];
 
-        document.getElementById('add-selected-button').addEventListener('click', function () {
-            const selectedList = document.getElementById('selected-list');
-            const selectedItems = selectedList.getElementsByTagName('li');
-            if (selectedItems.length > 0) {
-                const randomIndex = Math.floor(Math.random() * selectedItems.length);
-                const randomItem = selectedItems[randomIndex];
-                moveItemToGeneratedList(randomItem);
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${selectedList.listName}: ${randomItem}`;
+                    generatedList.appendChild(listItem);
+                }
             }
         });
 
