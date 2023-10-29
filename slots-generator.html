@@ -38,18 +38,30 @@
         <input type="number" id="num-items" min="1" value="1">
         <button id="generate-button">Generate</button>
 
-        <h2>Generated Items:</h2>
-        <ul id="generated-list"></ul>
+        <div class="lists-container">
+            <div class="items-list">
+                <h2>Generated Items:</h2>
+                <ul id="generated-list"></ul>
+            </div>
+            <div class="items-list">
+                <h2>Bonus List:</h2>
+                <ul id="bonus-list">
+                    <!-- Bonus items (if needed) can be added here -->
+                </ul>
+            </div>
+        </div>
     </div>
 
     <button onclick="goBack()">Go Back</button>
-
+    <button id="generate-button" class="small-button">Generate</button>
     <script>
         function goBack() {
             window.history.back();
         }
 
-        document.getElementById('generate-button').addEventListener('click', async function () {
+        const bonusItems = [];
+
+        document.getElementById('generate-button').addEventListener('click', function () {
             const checkboxes = [
                 document.getElementById('list1-checkbox'),
                 document.getElementById('list2-checkbox'),
@@ -83,9 +95,42 @@
                     const listItem = document.createElement('li');
                     listItem.textContent = `${randomList.name}: ${randomItem}`;
                     generatedList.appendChild(listItem);
+
+                    // Create the +/- buttons for the generated items
+                    const addButton = document.createElement('button');
+                    addButton.textContent = '+';
+                    addButton.addEventListener('click', function () {
+                        // Add the item to the Bonus List (if needed)
+                        bonusItems.push(randomItem);
+                        updateBonusList();
+                        listItem.remove();
+                    });
+                    listItem.appendChild(addButton);
                 }
             }
         });
+
+        function updateBonusList() {
+            const bonusList = document.getElementById('bonus-list');
+            bonusList.innerHTML = '';
+
+            for (let i = 0; i < bonusItems.length; i++) {
+                const bonusItem = bonusItems[i];
+                const bonusListItem = document.createElement('li');
+                bonusListItem.textContent = `Bonus: ${bonusItem}`;
+
+                const minusButton = document.createElement('button');
+                minusButton.textContent = '-';
+                minusButton.addEventListener('click', function () {
+                    // Remove the item from the Bonus List
+                    bonusItems.splice(i, 1);
+                    updateBonusList();
+                });
+
+                bonusListItem.appendChild(minusButton);
+                bonusList.appendChild(bonusListItem);
+            }
+        }
 
         async function loadList(filename) {
             try {
