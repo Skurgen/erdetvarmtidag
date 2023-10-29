@@ -60,6 +60,13 @@
         }
 
         const bonusItems = [];
+         window.addEventListener('load', function () {
+            const storedBonusItems = localStorage.getItem('bonusItems');
+            if (storedBonusItems) {
+                bonusItems.push(...JSON.parse(storedBonusItems));
+                updateBonusList();
+            }
+        });
 
         document.getElementById('generate-button').addEventListener('click', async function () {
             const checkboxes = [
@@ -102,6 +109,7 @@
                     addButton.addEventListener('click', function () {
                         bonusItems.push(randomItem);
                         updateBonusList();
+                        localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
                     });
                     listItem.appendChild(addButton);
                 }
@@ -122,6 +130,7 @@
                 minusButton.addEventListener('click', function () {
                     bonusItems.splice(i, 1);
                     updateBonusList();
+                    localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
                 });
 
                 bonusListItem.appendChild(minusButton);
