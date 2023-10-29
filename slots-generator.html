@@ -53,7 +53,7 @@
     </div>
 
     <button onclick="goBack()">Go Back</button>
-
+    <button id="generate-button" class="small-button">Generate</button>
     <script>
         function goBack() {
             window.history.back();
@@ -61,67 +61,60 @@
 
         const bonusItems = [];
 
-        // Load the bonus list from localStorage when the page loads
-        window.addEventListener('load', function () {
-            const storedBonusItems = localStorage.getItem('bonusItems');
-            if (storedBonusItems) {
-                bonusItems.push(...JSON.parse(storedBonusItems));
-                updateBonusList();
-            }
-        });
-
         document.getElementById('generate-button').addEventListener('click', function () {
-            const checkboxes = [
-                document.getElementById('list1-checkbox'),
-                document.getElementById('list2-checkbox'),
-                document.getElementById('list3-checkbox'),
-                document.getElementById('list4-checkbox'),
-                document.getElementById('list5-checkbox'),
-                document.getElementById('list6-checkbox'),
-                document.getElementById('list7-checkbox')
+            // Create a new list for selected items
+            const selectedItems = [];
+            const selectedLists = [
+                ["Wanted", "Benny", "Itero"],
+                ["Gates of Olympus", "Sugar Rush", "Starlight Princess"],
+                ["Legacy of dead", "Book of Dead", "Shimmering Woods"],
+                ["Deadwood", "Mental", "Road Rage"],
+                ["TTB griffins gold", "Pink Elephant 2", "Sword of khans"],
+                ["Snake Arena", "Money Train 2", "Money Train 3"],
+                ["Dwarfs Gone Wild", "Blue Fortune", "Ghost Glyph"]
             ];
 
-            const generatedList = document.getElementById('generated-list');
-            generatedList.innerHTML = ''; // Clear previous items
-
-            const selectedLists = [];
-
-            for (let i = 0; i < checkboxes.length; i++) {
-                if (checkboxes[i].checked) {
-                    // Simulate loading a list (replace with your actual list loading code)
-                    const listName = checkboxes[i].parentNode.textContent.trim();
-                    selectedLists.push({ list: [], name: listName });
-                }
-            }
-
             const numItems = parseInt(document.getElementById('num-items').value);
-            for (let i = 0; i < numItems; i++) {
-                if (selectedLists.length > 0) {
+            if (selectedLists.length > 0) {
+                for (let i = 0; i < numItems; i++) {
                     const randomListIndex = Math.floor(Math.random() * selectedLists.length);
                     const randomList = selectedLists[randomListIndex];
-                    const randomIndex = Math.floor(Math.random() * randomList.list.length);
-                    const randomItem = randomList.list[randomIndex];
-
-                    const listItem = document.createElement('li');
-                    listItem.textContent = `${randomList.name}: ${randomItem}`;
-                    generatedList.appendChild(listItem);
-
-                    const addButton = document.createElement('button');
-                    addButton.textContent = '+';
-                    addButton.style.fontSize = '12px'; // Smaller font size
-                    addButton.style.padding = '2px 4px'; // Smaller padding
-                    addButton.addEventListener('click', function () {
-                        bonusItems.push(randomItem);
-                        updateBonusList();
-                        // Update localStorage when an item is added
-                        localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
-                    });
-                    listItem.appendChild(addButton);
+                    const randomIndex = Math.floor(Math.random() * randomList.length);
+                    const randomItem = randomList[randomIndex];
+                    selectedItems.push(randomItem);
                 }
+                // Display selected items in the Generated Items list
+                updateGeneratedList(selectedItems);
             }
         });
 
-        function updateBonusList() {
+        function updateGeneratedList(items) {
+            const generatedList = document.getElementById('generated-list');
+            generatedList.innerHTML = '';
+
+            for (const item of items) {
+                const listItem = document.createElement('li');
+                listItem.textContent = `Generated: ${item}`;
+
+                const addButton = document.createElement('button');
+                addButton.textContent = '+';
+                addButton.addEventListener('click', function () {
+                    // Add the item to the Bonus List (if needed)
+                    bonusItems.push(item);
+                    updateBonusList();
+
+                    // Generate a new random item from the list and replace the current item
+                    const newRandomIndex = Math.floor(Math.random() * selectedLists[0].length);
+                    const newRandomItem = selectedLists[0][newRandomIndex];
+                    listItem.textContent = `Generated: ${newRandomItem}`;
+                });
+
+                listItem.appendChild(addButton);
+                generatedList.appendChild(listItem);
+            }
+        }
+
+       function updateBonusList() {
             const bonusList = document.getElementById('bonus-list');
             bonusList.innerHTML = '';
 
@@ -133,10 +126,9 @@
                 const minusButton = document.createElement('button');
                 minusButton.textContent = '-';
                 minusButton.addEventListener('click', function () {
+                    // Remove the item from the Bonus List
                     bonusItems.splice(i, 1);
                     updateBonusList();
-                    // Update localStorage when an item is removed
-                    localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
                 });
 
                 bonusListItem.appendChild(minusButton);
