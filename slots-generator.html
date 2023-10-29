@@ -53,7 +53,7 @@
     </div>
 
     <button onclick="goBack()">Go Back</button>
-    <button id="generate-button" class="small-button">Generate</button>
+
     <script>
         function goBack() {
             window.history.back();
@@ -61,60 +61,54 @@
 
         const bonusItems = [];
 
-        document.getElementById('generate-button').addEventListener('click', function () {
-            // Create a new list for selected items
-            const selectedItems = [];
-            const selectedLists = [
-                ["Wanted", "Benny", "Itero"],
-                ["Gates of Olympus", "Sugar Rush", "Starlight Princess"],
-                ["Legacy of dead", "Book of Dead", "Shimmering Woods"],
-                ["Deadwood", "Mental", "Road Rage"],
-                ["TTB griffins gold", "Pink Elephant 2", "Sword of khans"],
-                ["Snake Arena", "Money Train 2", "Money Train 3"],
-                ["Dwarfs Gone Wild", "Blue Fortune", "Ghost Glyph"]
+        document.getElementById('generate-button').addEventListener('click', async function () {
+            const checkboxes = [
+                document.getElementById('list1-checkbox'),
+                document.getElementById('list2-checkbox'),
+                document.getElementById('list3-checkbox'),
+                document.getElementById('list4-checkbox'),
+                document.getElementById('list5-checkbox'),
+                document.getElementById('list6-checkbox'),
+                document.getElementById('list7-checkbox')
             ];
 
+            const generatedList = document.getElementById('generated-list');
+            generatedList.innerHTML = ''; // Clear previous items
+
+            const selectedLists = [];
+
+            for (let i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    const list = await loadList(`list${i + 1}.txt`);
+                    const listName = checkboxes[i].parentNode.textContent.trim(); // Get the list name
+                    selectedLists.push({ list, name: listName });
+                }
+            }
+
             const numItems = parseInt(document.getElementById('num-items').value);
-            if (selectedLists.length > 0) {
-                for (let i = 0; i < numItems; i++) {
+            for (let i = 0; i < numItems; i++) {
+                if (selectedLists.length > 0) {
                     const randomListIndex = Math.floor(Math.random() * selectedLists.length);
                     const randomList = selectedLists[randomListIndex];
-                    const randomIndex = Math.floor(Math.random() * randomList.length);
-                    const randomItem = randomList[randomIndex];
-                    selectedItems.push(randomItem);
+                    const randomIndex = Math.floor(Math.random() * randomList.list.length);
+                    const randomItem = randomList.list[randomIndex];
+
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `${randomList.name}: ${randomItem}`;
+                    generatedList.appendChild(listItem);
+
+                    const addButton = document.createElement('button');
+                    addButton.textContent = '+';
+                    addButton.addEventListener('click', function () {
+                        bonusItems.push(randomItem);
+                        updateBonusList();
+                    });
+                    listItem.appendChild(addButton);
                 }
-                // Display selected items in the Generated Items list
-                updateGeneratedList(selectedItems);
             }
         });
 
-        function updateGeneratedList(items) {
-            const generatedList = document.getElementById('generated-list');
-            generatedList.innerHTML = '';
-
-            for (const item of items) {
-                const listItem = document.createElement('li');
-                listItem.textContent = `Generated: ${item}`;
-
-                const addButton = document.createElement('button');
-                addButton.textContent = '+';
-                addButton.addEventListener('click', function () {
-                    // Add the item to the Bonus List (if needed)
-                    bonusItems.push(item);
-                    updateBonusList();
-
-                    // Generate a new random item from the list and replace the current item
-                    const newRandomIndex = Math.floor(Math.random() * selectedLists[0].length);
-                    const newRandomItem = selectedLists[0][newRandomIndex];
-                    listItem.textContent = `Generated: ${newRandomItem}`;
-                });
-
-                listItem.appendChild(addButton);
-                generatedList.appendChild(listItem);
-            }
-        }
-
-       function updateBonusList() {
+        function updateBonusList() {
             const bonusList = document.getElementById('bonus-list');
             bonusList.innerHTML = '';
 
@@ -126,13 +120,26 @@
                 const minusButton = document.createElement('button');
                 minusButton.textContent = '-';
                 minusButton.addEventListener('click', function () {
-                    // Remove the item from the Bonus List
                     bonusItems.splice(i, 1);
                     updateBonusList();
                 });
 
                 bonusListItem.appendChild(minusButton);
                 bonusList.appendChild(bonusListItem);
+            }
+        }
+
+        async function loadList(filename) {
+            try {
+                const response = await fetch(filename);
+                if (!response.ok) {
+                    throw new Error('File not found');
+                }
+                const text = await response.text();
+                return text.split('\n').filter(item => item.trim() !== ''); // Split by newline and remove empty lines
+            } catch (error) {
+                console.error('Error loading the file:', error);
+                return [];
             }
         }
     </script>
