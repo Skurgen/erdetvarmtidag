@@ -106,6 +106,8 @@
 
                     const addButton = document.createElement('button');
                     addButton.textContent = '+';
+                    addButton.style.fontSize = '12px'; // Smaller font size
+                    addButton.style.padding = '2px 4px'; // Smaller padding
                     addButton.addEventListener('click', function () {
                         bonusItems.push(randomItem);
                         updateBonusList();
@@ -127,6 +129,8 @@
 
                 const minusButton = document.createElement('button');
                 minusButton.textContent = '-';
+                minusButton.style.fontSize = '12px'; // Smaller font size
+                minusButton.style.padding = '2px 4px'; // Smaller padding
                 minusButton.addEventListener('click', function () {
                     bonusItems.splice(i, 1);
                     updateBonusList();
