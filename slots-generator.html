@@ -76,13 +76,43 @@
             generatedList.innerHTML = ''; // Clear previous items
 
             const selectedLists = [];
-            for (let i = 0; i < checkboxes.length; i++) {
-                if (checkboxes[i].checked) {
-                    const list = await loadList(`list${i + 1}.txt`);
-                    const listName = checkboxes[i].parentNode.textContent.trim(); // Get the list name
-                    selectedLists.push({ list, name: listName });
+            let selectedCount = 0;
+
+            function loadListAndGenerate(i) {
+                if (i < checkboxes.length) {
+                    if (checkboxes[i].checked) {
+                        loadList(`list${i + 1}.txt`).then((list) => {
+                            const listName = checkboxes[i].parentNode.textContent.trim(); // Get the list name
+                            selectedLists.push({ list, name: listName });
+                            selectedCount++;
+
+                            if (selectedCount === checkboxes.length) {
+                                generateItems(selectedLists);
+                            }
+                        }).catch(error => {
+                            console.error('Error loading the file:', error);
+                            selectedCount++;
+                            if (selectedCount === checkboxes.length) {
+                                generateItems(selectedLists);
+                            }
+                        });
+                    } else {
+                        selectedCount++;
+                        if (selectedCount === checkboxes.length) {
+                            generateItems(selectedLists);
+                        }
+                    }
+                } else {
+                    generateItems(selectedLists);
                 }
             }
+
+            loadListAndGenerate(0);
+        });
+
+        function generateItems(selectedLists) {
+            const generatedList = document.getElementById('generated-list');
+            generatedList.innerHTML = '';
 
             const numItems = parseInt(document.getElementById('num-items').value);
             for (let i = 0; i < numItems; i++) {
@@ -108,7 +138,7 @@
                     listItem.appendChild(addButton);
                 }
             }
-        });
+        }
 
         function updateBonusList() {
             const bonusList = document.getElementById('bonus-list');
