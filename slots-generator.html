@@ -60,42 +60,32 @@
         }
 
         const bonusItems = [];
-          function loadListsFromTextFile(fileId) {
-                return fetch(fileId)
-                    .then((response) => response.text())
-                    .then((data) => data.split('\n').map((item) => item.trim()).filter(Boolean));
+
+        document.getElementById('generate-button').addEventListener('click', function () {
+            // Create a new list for selected items
+            const selectedItems = [];
+            const fs = require('fs');
+           const fileNames = ['list1.txt', 'list2.txt', 'list3.txt', 'list4.txt', 'list5.txt', 'list6.txt', 'list7.txt'];
+             const selectedLists = fileNames.map(fileName => {
+             const data = fs.readFileSync(fileName, 'utf-8');
+             const list = data.split('\n');
+             return list;
+          });
+          console.log(selectedLists);
+
+            const numItems = parseInt(document.getElementById('num-items').value);
+            if (selectedLists.length > 0) {
+                for (let i = 0; i < numItems; i++) {
+                    const randomListIndex = Math.floor(Math.random() * selectedLists.length);
+                    const randomList = selectedLists[randomListIndex];
+                    const randomIndex = Math.floor(Math.random() * randomList.length);
+                    const randomItem = randomList[randomIndex];
+                    selectedItems.push(randomItem);
+                }
+                // Display selected items in the Generated Items list
+                updateGeneratedList(selectedItems);
             }
-
-
-        Promise.all([
-                loadListsFromTextFile('list1.txt'),
-                loadListsFromTextFile('list2.txt'),
-            loadListsFromTextFile('list3.txt'),
-            loadListsFromTextFile('list4.txt'),
-            loadListsFromTextFile('list5.txt'),
-            loadListsFromTextFile('list6.txt'),
-            loadListsFromTextFile('list7.txt'),
-                // Add more text files as needed
-            ]).then((lists) => {
-                const selectedLists = lists.map((list) => list.split('\n').map((item) => item.trim()).filter(Boolean));
-
-                document.getElementById('generate-button').addEventListener('click', function () {
-                    const selectedItems = [];
-                    const numItems = parseInt(document.getElementById('num-items').value);
-
-                    if (selectedLists.length > 0) {
-                        for (let i = 0; i < numItems; i++) {
-                            const randomListIndex = Math.floor(Math.random() * selectedLists.length);
-                            const randomList = selectedLists[randomListIndex];
-                            const randomIndex = Math.floor(Math.random() * randomList.length);
-                            const randomItem = randomList[randomIndex];
-                            selectedItems.push(randomItem);
-                        }
-                        // Display selected items in the Generated Items list
-                        updateGeneratedList(selectedItems);
-                    }
-                });
-             });
+        });
 
         function updateGeneratedList(items) {
             const generatedList = document.getElementById('generated-list');
