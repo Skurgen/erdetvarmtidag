@@ -61,7 +61,16 @@
 
         const bonusItems = [];
 
-        document.getElementById('generate-button').addEventListener('click', async function () {
+        // Load the bonus list from localStorage when the page loads
+        window.addEventListener('load', function () {
+            const storedBonusItems = localStorage.getItem('bonusItems');
+            if (storedBonusItems) {
+                bonusItems.push(...JSON.parse(storedBonusItems));
+                updateBonusList();
+            }
+        });
+
+        document.getElementById('generate-button').addEventListener('click', function () {
             const checkboxes = [
                 document.getElementById('list1-checkbox'),
                 document.getElementById('list2-checkbox'),
@@ -79,9 +88,9 @@
 
             for (let i = 0; i < checkboxes.length; i++) {
                 if (checkboxes[i].checked) {
-                    const list = await loadList(`list${i + 1}.txt`);
-                    const listName = checkboxes[i].parentNode.textContent.trim(); // Get the list name
-                    selectedLists.push({ list, name: listName });
+                    // Simulate loading a list (replace with your actual list loading code)
+                    const listName = checkboxes[i].parentNode.textContent.trim();
+                    selectedLists.push({ list: [], name: listName });
                 }
             }
 
@@ -99,9 +108,13 @@
 
                     const addButton = document.createElement('button');
                     addButton.textContent = '+';
+                    addButton.style.fontSize = '12px'; // Smaller font size
+                    addButton.style.padding = '2px 4px'; // Smaller padding
                     addButton.addEventListener('click', function () {
                         bonusItems.push(randomItem);
                         updateBonusList();
+                        // Update localStorage when an item is added
+                        localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
                     });
                     listItem.appendChild(addButton);
                 }
@@ -122,24 +135,12 @@
                 minusButton.addEventListener('click', function () {
                     bonusItems.splice(i, 1);
                     updateBonusList();
+                    // Update localStorage when an item is removed
+                    localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
                 });
 
                 bonusListItem.appendChild(minusButton);
                 bonusList.appendChild(bonusListItem);
-            }
-        }
-
-        async function loadList(filename) {
-            try {
-                const response = await fetch(filename);
-                if (!response.ok) {
-                    throw new Error('File not found');
-                }
-                const text = await response.text();
-                return text.split('\n').filter(item => item.trim() !== ''); // Split by newline and remove empty lines
-            } catch (error) {
-                console.error('Error loading the file:', error);
-                return [];
             }
         }
     </script>
