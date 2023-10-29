@@ -53,6 +53,7 @@
     </div>
 
     <button onclick="goBack()">Go Back</button>
+
     <script>
         function goBack() {
             window.history.back();
@@ -60,7 +61,7 @@
 
         const bonusItems = [];
 
-        document.getElementById('generate-button').addEventListener('click', function () {
+        document.getElementById('generate-button').addEventListener('click', async function () {
             const checkboxes = [
                 document.getElementById('list1-checkbox'),
                 document.getElementById('list2-checkbox'),
@@ -75,43 +76,14 @@
             generatedList.innerHTML = ''; // Clear previous items
 
             const selectedLists = [];
-            let selectedCount = 0;
 
-            function loadListAndGenerate(i) {
-                if (i < checkboxes.length) {
-                    if (checkboxes[i].checked) {
-                        loadList(`list${i + 1}.txt`).then((list) => {
-                            const listName = checkboxes[i].parentNode.textContent.trim(); // Get the list name
-                            selectedLists.push({ list, name: listName });
-                            selectedCount++;
-
-                            if (selectedCount === checkboxes.length) {
-                                generateItems(selectedLists);
-                            }
-                        }).catch(error => {
-                            console.error('Error loading the file:', error);
-                            selectedCount++;
-                            if (selectedCount === checkboxes.length) {
-                                generateItems(selectedLists);
-                            }
-                        });
-                    } else {
-                        selectedCount++;
-                        if (selectedCount === checkboxes.length) {
-                            generateItems(selectedLists);
-                        }
-                    }
-                } else {
-                    generateItems(selectedLists);
+            for (let i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    const list = await loadList(`list${i + 1}.txt`);
+                    const listName = checkboxes[i].parentNode.textContent.trim(); // Get the list name
+                    selectedLists.push({ list, name: listName });
                 }
             }
-
-            loadListAndGenerate(0);
-        });
-
-        function generateItems(selectedLists) {
-            const generatedList = document.getElementById('generated-list');
-            generatedList.innerHTML = '';
 
             const numItems = parseInt(document.getElementById('num-items').value);
             for (let i = 0; i < numItems; i++) {
@@ -125,19 +97,16 @@
                     listItem.textContent = `${randomList.name}: ${randomItem}`;
                     generatedList.appendChild(listItem);
 
-                    // Create the +/- buttons for the generated items
                     const addButton = document.createElement('button');
                     addButton.textContent = '+';
                     addButton.addEventListener('click', function () {
-                        // Add the item to the Bonus List (if needed)
                         bonusItems.push(randomItem);
                         updateBonusList();
-                        listItem.remove();
                     });
                     listItem.appendChild(addButton);
                 }
             }
-        }
+        });
 
         function updateBonusList() {
             const bonusList = document.getElementById('bonus-list');
@@ -151,7 +120,6 @@
                 const minusButton = document.createElement('button');
                 minusButton.textContent = '-';
                 minusButton.addEventListener('click', function () {
-                    // Remove the item from the Bonus List
                     bonusItems.splice(i, 1);
                     updateBonusList();
                 });
