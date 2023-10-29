@@ -11,25 +11,35 @@
         <h1>Slots Generator</h1>
 
         <h2>Select Items:</h2>
-        <!-- Checkbox labels will be loaded dynamically -->
-        <!-- Add the data-source attribute to specify the data source file for each checkbox -->
-        <label><input type="checkbox" id="list1-checkbox" data-source="list1.txt"> Loading...</label>
-        <label><input type="checkbox" id="list2-checkbox" data-source="list2.txt"> Loading...</label>
-        <label><input type="checkbox" id="list3-checkbox" data-source="list3.txt"> Loading...</label>
-        <label><input type="checkbox" id="list4-checkbox" data-source="list4.txt"> Loading...</label>
-        <label><input type="checkbox" id="list5-checkbox" data-source="list5.txt"> Loading...</label>
-        <label><input type="checkbox" id="list6-checkbox" data-source="list6.txt"> Loading...</label>
-        <label><input type="checkbox" id="list7-checkbox" data-source="list7.txt"> Loading...</label>
+        <label>
+            <input type="checkbox" id="list1-checkbox"> Hacksaw
+        </label>
+        <label>
+            <input type="checkbox" id="list2-checkbox"> Pragmatic
+        </label>
+        <label>
+            <input type="checkbox" id="list3-checkbox"> Play n' Go
+        </label>
+        <label>
+            <input type="checkbox" id="list4-checkbox"> Nolimit City
+        </label>
+        <label>
+            <input type="checkbox" id="list5-checkbox"> Thunderkick
+        </label>
+        <label>
+            <input type="checkbox" id="list6-checkbox"> Relax Gaming
+        </label>
+        <label>
+            <input type="checkbox" id="list7-checkbox"> Quickspin
+        </label>
 
         <h2>Generate Random Items:</h2>
         <label for="num-items">Number of Items:</label>
         <input type="number" id="num-items" min="1" value="1">
         <button id="generate-button">Generate</button>
 
-        <div class="lists-container">
-            <div class="items-list">
-                <h2>Generated Items:</h2>
-                <ul id="generated-list"></ul>
+        <h2>Generated Items:</h2>
+         <ul id="generated-list"></ul>
             </div>
             <div class="items-list">
                 <h2>Bonus List:</h2>
@@ -48,33 +58,36 @@
         }
 
         const bonusItems = [];
+        document.getElementById('generate-button').addEventListener('click', async function () {
+            const checkboxes = [
+                document.getElementById('list1-checkbox'),
+                document.getElementById('list2-checkbox'),
+                document.getElementById('list3-checkbox'),
+                document.getElementById('list4-checkbox'),
+                document.getElementById('list5-checkbox'),
+                document.getElementById('list6-checkbox'),
+                document.getElementById('list7-checkbox')
+            ];
 
-        document.getElementById('generate-button').addEventListener('click', function () {
-            // Create a new list for selected items
-            const selectedItems = [];
+            const generatedList = document.getElementById('generated-list');
+            generatedList.innerHTML = ''; // Clear previous items
+
             const selectedLists = [];
-
-            // Load checkbox labels from text files
-            for (let i = 1; i <= 7; i++) {
-                const checkbox = document.getElementById(`list${i}-checkbox`);
-                const dataSource = checkbox.getAttribute('data-source');
-
-                fetch(dataSource)
-                    .then(response => response.text())
-                    .then(data => {
-                        checkbox.nextElementSibling.textContent = data; // Update label text
-                        selectedLists.push(data.split('\n')); // Create an array of items
-                    })
-                    .catch(error => console.error(`Error loading ${dataSource}: ${error}`));
+            for (let i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    const list = await loadList(`list${i + 1}.txt`);
+                    const listName = checkboxes[i].parentNode.textContent.trim(); // Get the list name
+                    selectedLists.push({ list, name: listName });
+                }
             }
 
-            const numItems = parseInt(document.getElementById('num-items').value);
+         const numItems = parseInt(document.getElementById('num-items').value);
             if (selectedLists.length > 0) {
                 for (let i = 0; i < numItems; i++) {
                     const randomListIndex = Math.floor(Math.random() * selectedLists.length);
                     const randomList = selectedLists[randomListIndex];
                     const randomIndex = Math.floor(Math.random() * randomList.length);
-                    const randomItem = randomList[randomIndex].trim();
+                    const randomItem = randomList[randomIndex];
                     selectedItems.push(randomItem);
                 }
                 // Display selected items in the Generated Items list
@@ -98,12 +111,9 @@
                     updateBonusList();
 
                     // Generate a new random item from the list and replace the current item
-                    const newRandomList = selectedLists[0];
-                    if (newRandomList.length > 0) {
-                        const newRandomIndex = Math.floor(Math.random() * newRandomList.length);
-                        const newRandomItem = newRandomList[newRandomIndex].trim();
-                        listItem.textContent = `Generated: ${newRandomItem}`;
-                    }
+                    const newRandomIndex = Math.floor(Math.random() * selectedLists[0].length);
+                    const newRandomItem = selectedLists[0][newRandomIndex];
+                    listItem.textContent = `Generated: ${newRandomItem}`;
                 });
 
                 listItem.appendChild(addButton);
@@ -111,7 +121,7 @@
             }
         }
 
-        function updateBonusList() {
+       function updateBonusList() {
             const bonusList = document.getElementById('bonus-list');
             bonusList.innerHTML = '';
 
@@ -130,6 +140,20 @@
 
                 bonusListItem.appendChild(minusButton);
                 bonusList.appendChild(bonusListItem);
+            }
+        }
+
+        async function loadList(filename) {
+            try {
+                const response = await fetch(filename);
+                if (!response.ok) {
+                    throw new Error('File not found');
+                }
+                const text = await response.text();
+                return text.split('\n').filter(item => item.trim() !== ''); // Split by newline and remove empty lines
+            } catch (error) {
+                console.error('Error loading the file:', error);
+                return [];
             }
         }
     </script>
