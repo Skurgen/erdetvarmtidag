@@ -48,4 +48,10 @@
     li {
         margin: 5px 0;
     }
+
+    /* Styles for smaller buttons */
+    button.small-button {
+        font-size: 12px;
+        padding: 4px 8px;
+    }
 </style>
