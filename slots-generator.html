@@ -59,17 +59,8 @@
             window.history.back();
         }
 
-        
-
         const bonusItems = [];
         const selectedLists = [];
-         window.addEventListener('load', function () {
-            const storedBonusItems = localStorage.getItem('bonusItems');
-            if (storedBonusItems) {
-                bonusItems.push(...JSON.parse(storedBonusItems));
-                updateBonusList();
-            }
-        });
 
         document.getElementById('generate-button').addEventListener('click', async function () {
             const checkboxes = [
@@ -107,10 +98,14 @@
                     const listItem = document.createElement('li');
                     const link = document.createElement('a');
                     link.href = randomItem.url; // Use the URL provided for the element
-                    link.textContent = `${randomList.name}: ${randomItem.name}`;
+                    link.textContent = randomItem.name; // Display only the item name
                     link.target = "_blank"; // Open in a new tab
                     listItem.appendChild(link);
                     generatedList.appendChild(listItem);
+                    
+                    const listNameText = document.createElement('span');
+                    listNameText.textContent = randomList.name;
+                    listItem.appendChild(listNameText);
 
                     const addButton = document.createElement('button');
                     addButton.textContent = '+';
@@ -119,7 +114,6 @@
                     addButton.addEventListener('click', function () {
                         bonusItems.push(randomItem);
                         updateBonusList();
-                        localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
                     });
                     listItem.appendChild(addButton);
                 }
@@ -135,16 +129,19 @@
                 const bonusListItem = document.createElement('li');
                 const bonusLink = document.createElement('a');
                 bonusLink.href = bonusItem.url; // Use the URL provided for the bonus item
-                bonusLink.textContent = `Bonus: ${bonusItem.name}`;
+                bonusLink.textContent = bonusItem.name; // Display only the item name
                 bonusLink.target = "_blank"; // Open in a new tab
                 bonusListItem.appendChild(bonusLink);
+                
+                const listNameText = document.createElement('span');
+                listNameText.textContent = bonusItem.listName;
+                bonusListItem.appendChild(listNameText);
 
                 const minusButton = document.createElement('button');
                 minusButton.textContent = '-';
                 minusButton.addEventListener('click', function () {
                     bonusItems.splice(i, 1);
                     updateBonusList();
-                    localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
                 });
 
                 bonusListItem.appendChild(minusButton);
