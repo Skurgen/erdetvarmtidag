@@ -123,7 +123,11 @@
             for (let i = 0; i < bonusItems.length; i++) {
                 const bonusItem = bonusItems[i];
                 const bonusListItem = document.createElement('li');
-                bonusListItem.textContent = `Bonus: ${bonusItem.name}`;
+                const bonusLink = document.createElement('a');
+                bonusLink.href = bonusItem.url; // Use the URL provided for the bonus item
+                bonusLink.textContent = `Bonus: ${bonusItem.name}`;
+                bonusLink.target = "_blank"; // Open in a new tab
+                bonusListItem.appendChild(bonusLink);
 
                 const minusButton = document.createElement('button');
                 minusButton.textContent = '-';
