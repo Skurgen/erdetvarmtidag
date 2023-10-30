@@ -60,13 +60,7 @@
         }
 
         const bonusItems = [];
-         window.addEventListener('load', function () {
-            const storedBonusItems = localStorage.getItem('bonusItems');
-            if (storedBonusItems) {
-                bonusItems.push(...JSON.parse(storedBonusItems));
-                updateBonusList();
-            }
-        });
+        const selectedLists = [];
 
         document.getElementById('generate-button').addEventListener('click', async function () {
             const checkboxes = [
@@ -82,13 +76,13 @@
             const generatedList = document.getElementById('generated-list');
             generatedList.innerHTML = ''; // Clear previous items
 
-            const selectedLists = [];
+            selectedLists.length = 0; // Clear the selected lists
 
             for (let i = 0; i < checkboxes.length; i++) {
                 if (checkboxes[i].checked) {
-                    const list = await loadList(`list${i + 1}.txt`);
-                    const listName = checkboxes[i].parentNode.textContent.trim(); // Get the list name
-                    selectedLists.push({ list, name: listName });
+                    const listName = checkboxes[i].parentNode.textContent.trim();
+                    const listData = await loadList(`list${i + 1}.txt`);
+                    selectedLists.push({ name: listName, data: listData });
                 }
             }
 
@@ -97,11 +91,16 @@
                 if (selectedLists.length > 0) {
                     const randomListIndex = Math.floor(Math.random() * selectedLists.length);
                     const randomList = selectedLists[randomListIndex];
-                    const randomIndex = Math.floor(Math.random() * randomList.list.length);
-                    const randomItem = randomList.list[randomIndex];
+                    const randomData = randomList.data;
+                    const randomIndex = Math.floor(Math.random() * randomData.length);
+                    const randomItem = randomData[randomIndex];
 
                     const listItem = document.createElement('li');
-                    listItem.textContent = `${randomList.name}: ${randomItem}`;
+                    const link = document.createElement('a');
+                    link.href = randomItem.url; // Use the URL provided for the element
+                    link.textContent = `${randomList.name}: ${randomItem.name}`;
+                    link.target = "_blank"; // Open in a new tab
+                    listItem.appendChild(link);
                     generatedList.appendChild(listItem);
 
                     const addButton = document.createElement('button');
@@ -111,7 +110,6 @@
                     addButton.addEventListener('click', function () {
                         bonusItems.push(randomItem);
                         updateBonusList();
-                        localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
                     });
                     listItem.appendChild(addButton);
                 }
@@ -125,16 +123,13 @@
             for (let i = 0; i < bonusItems.length; i++) {
                 const bonusItem = bonusItems[i];
                 const bonusListItem = document.createElement('li');
-                bonusListItem.textContent = `Bonus: ${bonusItem}`;
+                bonusListItem.textContent = `Bonus: ${bonusItem.name}`;
 
                 const minusButton = document.createElement('button');
                 minusButton.textContent = '-';
-                minusButton.style.fontSize = '12px'; // Smaller font size
-                minusButton.style.padding = '2px 4px'; // Smaller padding
                 minusButton.addEventListener('click', function () {
                     bonusItems.splice(i, 1);
                     updateBonusList();
-                    localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
                 });
 
                 bonusListItem.appendChild(minusButton);
@@ -149,7 +144,11 @@
                     throw new Error('File not found');
                 }
                 const text = await response.text();
-                return text.split('\n').filter(item => item.trim() !== ''); // Split by newline and remove empty lines
+                const lines = text.split('\n').map(item => item.trim()).filter(Boolean);
+                return lines.map(line => {
+                    const [name, url] = line.split('|');
+                    return { name, url };
+                });
             } catch (error) {
                 console.error('Error loading the file:', error);
                 return [];
