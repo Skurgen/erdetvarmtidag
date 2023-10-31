@@ -78,7 +78,9 @@
         });
 
         document.getElementById('generate-button').addEventListener('click', async function () {
-            // ... (existing code for generating items) ...
+            numItems = parseInt(document.getElementById('num-items').value); // Update numItems here.
+            updateGeneratedItems();
+            updateBonusItems();
         });
 
         // Add a change event listener to the toggle input
