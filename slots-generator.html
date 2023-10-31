@@ -54,21 +54,45 @@
 
     <button onclick="goBack()">Go Back</button>
 
+    <!-- URL toggle functionality -->
+    <div class="toggle-url">
+        <label for="show-urls">Show URLs:</label>
+        <input type="checkbox" id="show-urls">
+    </div>
+
     <script>
         function goBack() {
             window.history.back();
         }
 
-        
-
         const bonusItems = [];
         const selectedLists = [];
-         window.addEventListener('load', function () {
+        window.addEventListener('load', function () {
             const storedBonusItems = localStorage.getItem('bonusItems');
             if (storedBonusItems) {
                 bonusItems.push(...JSON.parse(storedBonusItems));
                 updateBonusList();
             }
+        });
+
+        // Function to toggle the visibility of URLs
+        function toggleURLs(showURLs) {
+            const generatedList = document.getElementById('generated-list');
+            const listItems = generatedList.getElementsByTagName('li');
+
+            for (let i = 0; i < listItems.length; i++) {
+                const item = listItems[i];
+                const link = item.querySelector('a');
+                if (link) {
+                    link.style.display = showURLs ? 'inline' : 'none';
+                }
+            }
+        }
+
+        // Add an event listener to the "show-urls" checkbox
+        const showUrlsCheckbox = document.getElementById('show-urls');
+        showUrlsCheckbox.addEventListener('change', function () {
+            toggleURLs(showUrlsCheckbox.checked);
         });
 
         document.getElementById('generate-button').addEventListener('click', async function () {
@@ -112,16 +136,11 @@
                     listItem.appendChild(link);
                     generatedList.appendChild(listItem);
 
-                    const addButton = document.createElement('button');
-                    addButton.textContent = '+';
-                    addButton.style.fontSize = '12px'; // Smaller font size
-                    addButton.style.padding = '2px 4px'; // Smaller padding
-                    addButton.addEventListener('click', function () {
-                        bonusItems.push(randomItem);
-                        updateBonusList();
-                        localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
+                    link.addEventListener('click', function (e) {
+                        e.preventDefault(); // Prevent the default link behavior
+                        const showURLs = showUrlsCheckbox.checked;
+                        link.style.display = showURLs ? 'inline' : 'none';
                     });
-                    listItem.appendChild(addButton);
                 }
             }
         });
