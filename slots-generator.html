@@ -64,13 +64,76 @@
 
         const bonusItems = [];
         const selectedLists = [];
+        let generatedListItems = []; // Keep track of generated items for toggle
+
         window.addEventListener('load', function () {
             const storedBonusItems = localStorage.getItem('bonusItems');
             if (storedBonusItems) {
                 bonusItems.push(...JSON.parse(storedBonusItems));
-                updateBonusList();
+                updateDisplayedLists();
             }
         });
+
+        // Function to update the displayed lists based on the toggle state
+        function updateDisplayedLists() {
+            const generatedList = document.getElementById('generated-list');
+            const bonusList = document.getElementById('bonus-list');
+            const toggleDisplay = document.getElementById('toggle-display').checked;
+
+            generatedList.innerHTML = ''; // Clear the generated list
+            bonusList.innerHTML = ''; // Clear the bonus list
+
+            for (let i = 0; i < bonusItems.length; i++) {
+                const bonusItem = bonusItems[i];
+                const bonusListItem = document.createElement('li');
+                const bonusLink = document.createElement('a');
+                bonusLink.href = bonusItem.url;
+                bonusLink.textContent = `Bonus: ${bonusItem.name}`;
+                bonusLink.target = "_blank";
+                bonusListItem.appendChild(bonusLink);
+
+                const minusButton = document.createElement('button');
+                minusButton.textContent = '-';
+                minusButton.style.fontSize = '12px';
+                minusButton.style.padding = '2px 4px';
+                minusButton.addEventListener('click', function () {
+                    bonusItems.splice(i, 1);
+                    updateDisplayedLists();
+                    localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
+                });
+
+                bonusListItem.appendChild(minusButton);
+                bonusList.appendChild(bonusListItem);
+            }
+
+            for (let i = 0; i < generatedListItems.length; i++) {
+                const listItem = document.createElement('li');
+                if (toggleDisplay) {
+                    // Display full information with a link
+                    const link = document.createElement('a');
+                    link.href = generatedListItems[i].url;
+                    link.textContent = `${generatedListItems[i].listName}: ${generatedListItems[i].name}`;
+                    link.target = "_blank";
+                    listItem.appendChild(link);
+
+                    const addButton = document.createElement('button');
+                    addButton.textContent = '+';
+                    addButton.style.fontSize = '12px';
+                    addButton.style.padding = '2px 4px';
+                    addButton.addEventListener('click', function () {
+                        bonusItems.push(generatedListItems[i]);
+                        updateDisplayedLists();
+                        localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
+                    });
+                    listItem.appendChild(addButton);
+                } else {
+                    // Display only the ElementName in plain text
+                    listItem.textContent = generatedListItems[i].name;
+                }
+
+                generatedList.appendChild(listItem);
+            }
+        }
 
         document.getElementById('generate-button').addEventListener('click', async function () {
             const checkboxes = [
@@ -83,12 +146,8 @@
                 document.getElementById('list7-checkbox')
             ];
 
-            const generatedList = document.getElementById('generated-list');
-            generatedList.innerHTML = ''; // Clear previous items
-
             selectedLists.length = 0; // Clear the selected lists
-
-            const toggleDisplay = document.getElementById('toggle-display').checked;
+            generatedListItems = []; // Clear generated items
 
             for (let i = 0; i < checkboxes.length; i++) {
                 if (checkboxes[i].checked) {
@@ -107,62 +166,17 @@
                     const randomIndex = Math.floor(Math.random() * randomData.length);
                     const randomItem = randomData[randomIndex];
 
-                    const listItem = document.createElement('li');
-                    if (toggleDisplay) {
-                        // Display full information with a link
-                        const link = document.createElement('a');
-                        link.href = randomItem.url; // Use the URL provided for the element
-                        link.textContent = `${randomList.name}: ${randomItem.name}`;
-                        link.target = "_blank"; // Open in a new tab
-                        listItem.appendChild(link);
-
-                        const addButton = document.createElement('button');
-                        addButton.textContent = '+';
-                        addButton.style.fontSize = '12px'; // Smaller font size
-                        addButton.style.padding = '2px 4px'; // Smaller padding
-                        addButton.addEventListener('click', function () {
-                            bonusItems.push(randomItem);
-                            updateBonusList();
-                            localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
-                        });
-                        listItem.appendChild(addButton);
-                    } else {
-                        // Display only the ElementName in plain text
-                        listItem.textContent = randomItem.name;
-                    }
-
-                    generatedList.appendChild(listItem);
+                    generatedListItems.push({
+                        listName: randomList.name,
+                        name: randomItem.name,
+                        url: randomItem.url
+                    });
                 }
             }
+
+            // Update displayed lists
+            updateDisplayedLists();
         });
-
-        function updateBonusList() {
-            const bonusList = document.getElementById('bonus-list');
-            bonusList.innerHTML = '';
-
-            for (let i = 0; i < bonusItems.length; i++) {
-                const bonusItem = bonusItems[i];
-                const bonusListItem = document.createElement('li');
-                const bonusLink = document.createElement('a');
-                bonusLink.href = bonusItem.url; // Use the URL provided for the bonus item
-                bonusLink.textContent = `Bonus: ${bonusItem.name}`;
-                bonusLink.target = "_blank"; // Open in a new tab
-                bonusListItem.appendChild(bonusLink);
-
-                const minusButton = document.createElement('button');
-                minusButton.textContent = '-';
-                minusButton.style.fontSize = '12px'; // Smaller font size
-                minusButton.style.padding = '2px 4px'; // Smaller padding
-                minusButton.addEventListener('click', function () {
-                    bonusItems.splice(i, 1);
-                    updateBonusList();
-                    localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
-                });
-
-                bonusListItem.appendChild(minusButton);
-                bonusList.appendChild(bonusListItem);
-            }
-        }
 
         async function loadList(filename) {
             try {
