@@ -38,6 +38,9 @@
         <input type="number" id="num-items" min="1" value="1">
         <button id="generate-button">Generate</button>
 
+        <label for="toggle-display">Toggle Display:</label>
+        <input type="checkbox" id="toggle-display">
+
         <div class="lists-container">
             <div class="items-list">
                 <h2>Generated Items:</h2>
@@ -59,11 +62,9 @@
             window.history.back();
         }
 
-        
-
         const bonusItems = [];
         const selectedLists = [];
-         window.addEventListener('load', function () {
+        window.addEventListener('load', function () {
             const storedBonusItems = localStorage.getItem('bonusItems');
             if (storedBonusItems) {
                 bonusItems.push(...JSON.parse(storedBonusItems));
@@ -87,6 +88,8 @@
 
             selectedLists.length = 0; // Clear the selected lists
 
+            const toggleDisplay = document.getElementById('toggle-display').checked;
+
             for (let i = 0; i < checkboxes.length; i++) {
                 if (checkboxes[i].checked) {
                     const listName = checkboxes[i].parentNode.textContent.trim();
@@ -105,23 +108,30 @@
                     const randomItem = randomData[randomIndex];
 
                     const listItem = document.createElement('li');
-                    const link = document.createElement('a');
-                    link.href = randomItem.url; // Use the URL provided for the element
-                    link.textContent = `${randomList.name}: ${randomItem.name}`;
-                    link.target = "_blank"; // Open in a new tab
-                    listItem.appendChild(link);
-                    generatedList.appendChild(listItem);
+                    if (toggleDisplay) {
+                        // Display full information with a link
+                        const link = document.createElement('a');
+                        link.href = randomItem.url; // Use the URL provided for the element
+                        link.textContent = `${randomList.name}: ${randomItem.name}`;
+                        link.target = "_blank"; // Open in a new tab
+                        listItem.appendChild(link);
 
-                    const addButton = document.createElement('button');
-                    addButton.textContent = '+';
-                    addButton.style.fontSize = '12px'; // Smaller font size
-                    addButton.style.padding = '2px 4px'; // Smaller padding
-                    addButton.addEventListener('click', function () {
-                        bonusItems.push(randomItem);
-                        updateBonusList();
-                        localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
-                    });
-                    listItem.appendChild(addButton);
+                        const addButton = document.createElement('button');
+                        addButton.textContent = '+';
+                        addButton.style.fontSize = '12px'; // Smaller font size
+                        addButton.style.padding = '2px 4px'; // Smaller padding
+                        addButton.addEventListener('click', function () {
+                            bonusItems.push(randomItem);
+                            updateBonusList();
+                            localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
+                        });
+                        listItem.appendChild(addButton);
+                    } else {
+                        // Display only the ElementName in plain text
+                        listItem.textContent = randomItem.name;
+                    }
+
+                    generatedList.appendChild(listItem);
                 }
             }
         });
