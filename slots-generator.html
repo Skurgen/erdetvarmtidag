@@ -108,6 +108,7 @@
 
             for (let i = 0; i < generatedListItems.length; i++) {
                 const listItem = document.createElement('li');
+
                 if (toggleDisplay.checked) {
                     // Display full information with a link
                     const link = document.createElement('a');
@@ -115,32 +116,22 @@
                     link.textContent = `${generatedListItems[i].listName}: ${generatedListItems[i].name}`;
                     link.target = "_blank";
                     listItem.appendChild(link);
-
-                    const addButton = document.createElement('button');
-                    addButton.textContent = '+';
-                    addButton.style.fontSize = '12px';
-                    addButton.style.padding = '2px 4px';
-                    addButton.addEventListener('click', function () {
-                        bonusItems.push(generatedListItems[i]);
-                        updateDisplayedLists();
-                        localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
-                    });
-                    listItem.appendChild(addButton);
                 } else {
                     // Display only the ElementName in plain text
-                    const plainText = document.createElement('span');
-                    plainText.textContent = generatedListItems[i].name;
-                    plainText.addEventListener('click', function () {
-                        // Convert plain text into a link when clicked
-                        const link = document.createElement('a');
-                        link.href = generatedListItems[i].url;
-                        link.textContent = generatedListItems[i].name;
-                        link.target = "_blank";
-                        listItem.innerHTML = ''; // Clear the plain text
-                        listItem.appendChild(link);
-                    });
-                    listItem.appendChild(plainText);
+                    listItem.textContent = generatedListItems[i].name;
                 }
+
+                // Add "+" button for generated items
+                const addButton = document.createElement('button');
+                addButton.textContent = '+';
+                addButton.style.fontSize = '12px';
+                addButton.style.padding = '2px 4px';
+                addButton.addEventListener('click', function () {
+                    bonusItems.push(generatedListItems[i]);
+                    updateDisplayedLists();
+                    localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
+                });
+                listItem.appendChild(addButton);
 
                 generatedList.appendChild(listItem);
             }
