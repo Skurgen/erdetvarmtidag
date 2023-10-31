@@ -36,7 +36,7 @@
         <h2>Generate Random Items:</h2>
         <label for="num-items">Number of Items:</label>
         <input type="number" id="num-items" min="1" value="1">
-        
+
         <!-- Add the toggle box for URL/Element Name display -->
         <label for="show-url">Show URLs:</label>
         <input type="checkbox" id="show-url" checked>
@@ -66,7 +66,8 @@
 
         const bonusItems = [];
         const selectedLists = [];
-        
+        let numItems = 1;
+
         window.addEventListener('load', function () {
             const storedBonusItems = localStorage.getItem('bonusItems');
             if (storedBonusItems) {
@@ -86,6 +87,8 @@
                 document.getElementById('list7-checkbox')
             ];
 
+            numItems = parseInt(document.getElementById('num-items').value);
+            const showURL = document.getElementById('show-url').checked;
             const generatedList = document.getElementById('generated-list');
             generatedList.innerHTML = ''; // Clear previous items
 
@@ -99,9 +102,6 @@
                 }
             }
 
-            const numItems = parseInt(document.getElementById('num-items').value);
-            const showURL = document.getElementById('show-url').checked;
-
             for (let i = 0; i < numItems; i++) {
                 if (selectedLists.length > 0) {
                     const randomListIndex = Math.floor(Math.random() * selectedLists.length);
@@ -111,12 +111,12 @@
                     const randomItem = randomData[randomIndex];
 
                     const listItem = document.createElement('li');
-                    const displayText = showURL ? randomItem.url : randomItem.name;
+                    const displayText = showURL ? `${randomItem.name}|${randomItem.url}` : randomItem.name;
 
                     if (showURL) {
                         const link = document.createElement('a');
                         link.href = randomItem.url;
-                        link.textContent = `${randomList.name}: ${displayText}`;
+                        link.textContent = `${randomList.name}: ${randomItem.name}`;
                         link.target = "_blank";
                         listItem.appendChild(link);
                     } else {
@@ -135,6 +135,30 @@
                         localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
                     });
                     listItem.appendChild(addButton);
+                }
+            }
+        });
+
+        // Add a change event listener to the toggle input
+        document.getElementById('show-url').addEventListener('change', function () {
+            const showURL = this.checked;
+
+            // Toggle the display format for generated items
+            for (let i = 0; i < numItems; i++) {
+                const listItem = document.getElementById(`generated-item-${i}`);
+                if (listItem) {
+                    const itemText = listItem.textContent;
+                    if (showURL) {
+                        const [name, url] = itemText.split('|');
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.textContent = name;
+                        link.target = "_blank";
+                        listItem.innerHTML = '';
+                        listItem.appendChild(link);
+                    } else {
+                        listItem.textContent = itemText;
+                    }
                 }
             }
         });
