@@ -36,6 +36,11 @@
         <h2>Generate Random Items:</h2>
         <label for="num-items">Number of Items:</label>
         <input type="number" id="num-items" min="1" value="1">
+        
+        <!-- Add the toggle box for URL/Element Name display -->
+        <label for="show-url">Show URLs:</label>
+        <input type="checkbox" id="show-url" checked>
+        
         <button id="generate-button">Generate</button>
 
         <div class="lists-container">
@@ -54,12 +59,6 @@
 
     <button onclick="goBack()">Go Back</button>
 
-    <!-- URL toggle functionality -->
-    <div class="toggle-url">
-        <label for="show-urls">Show URLs:</label>
-        <input type="checkbox" id="show-urls">
-    </div>
-
     <script>
         function goBack() {
             window.history.back();
@@ -67,32 +66,13 @@
 
         const bonusItems = [];
         const selectedLists = [];
+        
         window.addEventListener('load', function () {
             const storedBonusItems = localStorage.getItem('bonusItems');
             if (storedBonusItems) {
                 bonusItems.push(...JSON.parse(storedBonusItems));
                 updateBonusList();
             }
-        });
-
-        // Function to toggle the visibility of URLs
-        function toggleURLs(showURLs) {
-            const generatedList = document.getElementById('generated-list');
-            const listItems = generatedList.getElementsByTagName('li');
-
-            for (let i = 0; i < listItems.length; i++) {
-                const item = listItems[i];
-                const link = item.querySelector('a');
-                if (link) {
-                    link.style.display = showURLs ? 'inline' : 'none';
-                }
-            }
-        }
-
-        // Add an event listener to the "show-urls" checkbox
-        const showUrlsCheckbox = document.getElementById('show-urls');
-        showUrlsCheckbox.addEventListener('change', function () {
-            toggleURLs(showUrlsCheckbox.checked);
         });
 
         document.getElementById('generate-button').addEventListener('click', async function () {
@@ -120,6 +100,8 @@
             }
 
             const numItems = parseInt(document.getElementById('num-items').value);
+            const showURL = document.getElementById('show-url').checked;
+
             for (let i = 0; i < numItems; i++) {
                 if (selectedLists.length > 0) {
                     const randomListIndex = Math.floor(Math.random() * selectedLists.length);
@@ -129,18 +111,30 @@
                     const randomItem = randomData[randomIndex];
 
                     const listItem = document.createElement('li');
-                    const link = document.createElement('a');
-                    link.href = randomItem.url; // Use the URL provided for the element
-                    link.textContent = `${randomList.name}: ${randomItem.name}`;
-                    link.target = "_blank"; // Open in a new tab
-                    listItem.appendChild(link);
+                    const displayText = showURL ? randomItem.url : randomItem.name;
+
+                    if (showURL) {
+                        const link = document.createElement('a');
+                        link.href = randomItem.url;
+                        link.textContent = `${randomList.name}: ${displayText}`;
+                        link.target = "_blank";
+                        listItem.appendChild(link);
+                    } else {
+                        listItem.textContent = `${randomList.name}: ${displayText}`;
+                    }
+
                     generatedList.appendChild(listItem);
 
-                    link.addEventListener('click', function (e) {
-                        e.preventDefault(); // Prevent the default link behavior
-                        const showURLs = showUrlsCheckbox.checked;
-                        link.style.display = showURLs ? 'inline' : 'none';
+                    const addButton = document.createElement('button');
+                    addButton.textContent = '+';
+                    addButton.style.fontSize = '12px';
+                    addButton.style.padding = '2px 4px';
+                    addButton.addEventListener('click', function () {
+                        bonusItems.push(randomItem);
+                        updateBonusList();
+                        localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
                     });
+                    listItem.appendChild(addButton);
                 }
             }
         });
@@ -153,15 +147,15 @@
                 const bonusItem = bonusItems[i];
                 const bonusListItem = document.createElement('li');
                 const bonusLink = document.createElement('a');
-                bonusLink.href = bonusItem.url; // Use the URL provided for the bonus item
+                bonusLink.href = bonusItem.url;
                 bonusLink.textContent = `Bonus: ${bonusItem.name}`;
-                bonusLink.target = "_blank"; // Open in a new tab
+                bonusLink.target = "_blank";
                 bonusListItem.appendChild(bonusLink);
 
                 const minusButton = document.createElement('button');
                 minusButton.textContent = '-';
-                minusButton.style.fontSize = '12px'; // Smaller font size
-                minusButton.style.padding = '2px 4px'; // Smaller padding
+                minusButton.style.fontSize = '12px';
+                minusButton.style.padding = '2px 4px';
                 minusButton.addEventListener('click', function () {
                     bonusItems.splice(i, 1);
                     updateBonusList();
