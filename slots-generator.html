@@ -36,11 +36,6 @@
         <h2>Generate Random Items:</h2>
         <label for="num-items">Number of Items:</label>
         <input type="number" id="num-items" min="1" value="1">
-        
-        <!-- Add the toggle box for URL/Element Name display -->
-        <label for="show-url">Show URLs:</label>
-        <input type="checkbox" id="show-url" checked>
-        
         <button id="generate-button">Generate</button>
 
         <div class="lists-container">
@@ -64,11 +59,11 @@
             window.history.back();
         }
 
+        
+
         const bonusItems = [];
         const selectedLists = [];
-        let showURL = true; // Initial display format is URLs.
-
-        window.addEventListener('load', function () {
+         window.addEventListener('load', function () {
             const storedBonusItems = localStorage.getItem('bonusItems');
             if (storedBonusItems) {
                 bonusItems.push(...JSON.parse(storedBonusItems));
@@ -77,26 +72,30 @@
         });
 
         document.getElementById('generate-button').addEventListener('click', async function () {
-            generateItems();
-        });
+            const checkboxes = [
+                document.getElementById('list1-checkbox'),
+                document.getElementById('list2-checkbox'),
+                document.getElementById('list3-checkbox'),
+                document.getElementById('list4-checkbox'),
+                document.getElementById('list5-checkbox'),
+                document.getElementById('list6-checkbox'),
+                document.getElementById('list7-checkbox')
+            ];
 
-        // Add a change event listener to the toggle input
-        document.getElementById('show-url').addEventListener('change', function () {
-            showURL = this.checked;
-            updateGeneratedItems();
-            updateBonusItems();
-        });
-
-        function generateItems() {
-            const numItems = parseInt(document.getElementById('num-items').value);
-            updateGeneratedItems(numItems);
-            updateBonusItems();
-        }
-
-        function updateGeneratedItems(numItems) {
             const generatedList = document.getElementById('generated-list');
             generatedList.innerHTML = ''; // Clear previous items
 
+            selectedLists.length = 0; // Clear the selected lists
+
+            for (let i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    const listName = checkboxes[i].parentNode.textContent.trim();
+                    const listData = await loadList(`list${i + 1}.txt`);
+                    selectedLists.push({ name: listName, data: listData });
+                }
+            }
+
+            const numItems = parseInt(document.getElementById('num-items').value);
             for (let i = 0; i < numItems; i++) {
                 if (selectedLists.length > 0) {
                     const randomListIndex = Math.floor(Math.random() * selectedLists.length);
@@ -106,24 +105,17 @@
                     const randomItem = randomData[randomIndex];
 
                     const listItem = document.createElement('li');
-                    const displayText = showURL ? `${randomItem.name}|${randomItem.url}` : randomItem.name;
-
-                    if (showURL) {
-                        const link = document.createElement('a');
-                        link.href = randomItem.url;
-                        link.textContent = `${randomList.name}: ${randomItem.name}`;
-                        link.target = "_blank";
-                        listItem.appendChild(link);
-                    } else {
-                        listItem.textContent = `${randomList.name}: ${displayText}`;
-                    }
-
+                    const link = document.createElement('a');
+                    link.href = randomItem.url; // Use the URL provided for the element
+                    link.textContent = `${randomList.name}: ${randomItem.name}`;
+                    link.target = "_blank"; // Open in a new tab
+                    listItem.appendChild(link);
                     generatedList.appendChild(listItem);
 
                     const addButton = document.createElement('button');
                     addButton.textContent = '+';
-                    addButton.style.fontSize = '12px';
-                    addButton.style.padding = '2px 4px';
+                    addButton.style.fontSize = '12px'; // Smaller font size
+                    addButton.style.padding = '2px 4px'; // Smaller padding
                     addButton.addEventListener('click', function () {
                         bonusItems.push(randomItem);
                         updateBonusList();
@@ -132,7 +124,7 @@
                     listItem.appendChild(addButton);
                 }
             }
-        }
+        });
 
         function updateBonusList() {
             const bonusList = document.getElementById('bonus-list');
@@ -141,22 +133,16 @@
             for (let i = 0; i < bonusItems.length; i++) {
                 const bonusItem = bonusItems[i];
                 const bonusListItem = document.createElement('li');
-                const displayText = showURL ? `${bonusItem.name}|${bonusItem.url}` : bonusItem.name;
-
-                if (showURL) {
-                    const link = document.createElement('a');
-                    link.href = bonusItem.url;
-                    link.textContent = `Bonus: ${bonusItem.name}`;
-                    link.target = "_blank";
-                    bonusListItem.appendChild(link);
-                } else {
-                    bonusListItem.textContent = `Bonus: ${displayText}`;
-                }
+                const bonusLink = document.createElement('a');
+                bonusLink.href = bonusItem.url; // Use the URL provided for the bonus item
+                bonusLink.textContent = `Bonus: ${bonusItem.name}`;
+                bonusLink.target = "_blank"; // Open in a new tab
+                bonusListItem.appendChild(bonusLink);
 
                 const minusButton = document.createElement('button');
                 minusButton.textContent = '-';
-                minusButton.style.fontSize = '12px';
-                minusButton.style.padding = '2px 4px';
+                minusButton.style.fontSize = '12px'; // Smaller font size
+                minusButton.style.padding = '2px 4px'; // Smaller padding
                 minusButton.addEventListener('click', function () {
                     bonusItems.splice(i, 1);
                     updateBonusList();
