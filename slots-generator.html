@@ -67,6 +67,7 @@
         const bonusItems = [];
         const selectedLists = [];
         let numItems = 1;
+        let showURL = true; // Initial display format is URLs.
 
         window.addEventListener('load', function () {
             const storedBonusItems = localStorage.getItem('bonusItems');
@@ -77,30 +78,19 @@
         });
 
         document.getElementById('generate-button').addEventListener('click', async function () {
-            const checkboxes = [
-                document.getElementById('list1-checkbox'),
-                document.getElementById('list2-checkbox'),
-                document.getElementById('list3-checkbox'),
-                document.getElementById('list4-checkbox'),
-                document.getElementById('list5-checkbox'),
-                document.getElementById('list6-checkbox'),
-                document.getElementById('list7-checkbox')
-            ];
+            // ... (existing code for generating items) ...
+        });
 
-            numItems = parseInt(document.getElementById('num-items').value);
-            const showURL = document.getElementById('show-url').checked;
+        // Add a change event listener to the toggle input
+        document.getElementById('show-url').addEventListener('change', function () {
+            showURL = this.checked;
+            updateGeneratedItems();
+            updateBonusItems();
+        });
+
+        function updateGeneratedItems() {
             const generatedList = document.getElementById('generated-list');
             generatedList.innerHTML = ''; // Clear previous items
-
-            selectedLists.length = 0; // Clear the selected lists
-
-            for (let i = 0; i < checkboxes.length; i++) {
-                if (checkboxes[i].checked) {
-                    const listName = checkboxes[i].parentNode.textContent.trim();
-                    const listData = await loadList(`list${i + 1}.txt`);
-                    selectedLists.push({ name: listName, data: listData });
-                }
-            }
 
             for (let i = 0; i < numItems; i++) {
                 if (selectedLists.length > 0) {
@@ -137,44 +127,26 @@
                     listItem.appendChild(addButton);
                 }
             }
-        });
+        }
 
-        // Add a change event listener to the toggle input
-        document.getElementById('show-url').addEventListener('change', function () {
-            const showURL = this.checked;
-
-            // Toggle the display format for generated items
-            for (let i = 0; i < numItems; i++) {
-                const listItem = document.getElementById(`generated-item-${i}`);
-                if (listItem) {
-                    const itemText = listItem.textContent;
-                    if (showURL) {
-                        const [name, url] = itemText.split('|');
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.textContent = name;
-                        link.target = "_blank";
-                        listItem.innerHTML = '';
-                        listItem.appendChild(link);
-                    } else {
-                        listItem.textContent = itemText;
-                    }
-                }
-            }
-        });
-
-        function updateBonusList() {
+        function updateBonusItems() {
             const bonusList = document.getElementById('bonus-list');
             bonusList.innerHTML = '';
 
             for (let i = 0; i < bonusItems.length; i++) {
                 const bonusItem = bonusItems[i];
                 const bonusListItem = document.createElement('li');
-                const bonusLink = document.createElement('a');
-                bonusLink.href = bonusItem.url;
-                bonusLink.textContent = `Bonus: ${bonusItem.name}`;
-                bonusLink.target = "_blank";
-                bonusListItem.appendChild(bonusLink);
+                const displayText = showURL ? `${bonusItem.name}|${bonusItem.url}` : bonusItem.name;
+
+                if (showURL) {
+                    const link = document.createElement('a');
+                    link.href = bonusItem.url;
+                    link.textContent = `Bonus: ${bonusItem.name}`;
+                    link.target = "_blank";
+                    bonusListItem.appendChild(link);
+                } else {
+                    bonusListItem.textContent = `Bonus: ${displayText}`;
+                }
 
                 const minusButton = document.createElement('button');
                 minusButton.textContent = '-';
