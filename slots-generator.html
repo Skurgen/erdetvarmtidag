@@ -78,7 +78,7 @@
         function updateDisplayedLists() {
             const generatedList = document.getElementById('generated-list');
             const bonusList = document.getElementById('bonus-list');
-            const toggleDisplay = document.getElementById('toggle-display').checked;
+            const toggleDisplay = document.getElementById('toggle-display');
 
             generatedList.innerHTML = ''; // Clear the generated list
             bonusList.innerHTML = ''; // Clear the bonus list
@@ -108,7 +108,7 @@
 
             for (let i = 0; i < generatedListItems.length; i++) {
                 const listItem = document.createElement('li');
-                if (toggleDisplay) {
+                if (toggleDisplay.checked) {
                     // Display full information with a link
                     const link = document.createElement('a');
                     link.href = generatedListItems[i].url;
@@ -128,7 +128,18 @@
                     listItem.appendChild(addButton);
                 } else {
                     // Display only the ElementName in plain text
-                    listItem.textContent = generatedListItems[i].name;
+                    const plainText = document.createElement('span');
+                    plainText.textContent = generatedListItems[i].name;
+                    plainText.addEventListener('click', function () {
+                        // Convert plain text into a link when clicked
+                        const link = document.createElement('a');
+                        link.href = generatedListItems[i].url;
+                        link.textContent = generatedListItems[i].name;
+                        link.target = "_blank";
+                        listItem.innerHTML = ''; // Clear the plain text
+                        listItem.appendChild(link);
+                    });
+                    listItem.appendChild(plainText);
                 }
 
                 generatedList.appendChild(listItem);
@@ -177,6 +188,9 @@
             // Update displayed lists
             updateDisplayedLists();
         });
+
+        // Initialize the displayed lists
+        updateDisplayedLists();
 
         async function loadList(filename) {
             try {
