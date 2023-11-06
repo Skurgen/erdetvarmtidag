@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="slots-generator-styles.css">
+    <title>Slots Generator</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Slots Generator</h1>
+
+        <h2>Select Items:</h2>
+        <label>
+            <input type="checkbox" id="list1-checkbox"> Hacksaw
+        </label>
+        <label>
+            <input type="checkbox" id="list2-checkbox"> Pragmatic
+        </label>
+        <label>
+            <input type="checkbox" id="list3-checkbox"> Play n' Go
+        </label>
+        <label>
+            <input type="checkbox" id="list4-checkbox"> Nolimit City
+        </label>
+        <label>
+            <input type="checkbox" id="list5-checkbox"> Thunderkick
+        </label>
+        <label>
+            <input type="checkbox" id="list6-checkbox"> Relax Gaming
+        </label>
+        <label>
+            <input type="checkbox" id="list7-checkbox"> Quickspin
+        </label> 
+        <label>
+            <input type="checkbox" id="list8-checkbox"> Push Gaming
+        </label>
+
+        <h2>Generate Random Items:</h2>
+        <label for="num-items">Number of Items:</label>
+        <input type="number" id="num-items" min="1" value="1">
+        <button id="generate-button">Generate</button>
+
+        <div class="lists-container">
+            <div class="items-list">
+                <h2>Generated Items:</h2>
+                <ul id="generated-list"></ul>
+            </div>
+            <div class="items-list">
+                <h2>Bonus List:</h2>
+                <ul id="bonus-list">
+                    <!-- Bonus items (if needed) can be added here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <button onclick="goBack()">Go Back</button>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+
+        
+
+        const bonusItems = [];
+        const selectedLists = [];
+         window.addEventListener('load', function () {
+            const storedBonusItems = localStorage.getItem('bonusItems');
+            if (storedBonusItems) {
+                bonusItems.push(...JSON.parse(storedBonusItems));
+                updateBonusList();
+            }
+        });
+
+        document.getElementById('generate-button').addEventListener('click', async function () {
+            const checkboxes = [
+                document.getElementById('list1-checkbox'),
+                document.getElementById('list2-checkbox'),
+                document.getElementById('list3-checkbox'),
+                document.getElementById('list4-checkbox'),
+                document.getElementById('list5-checkbox'),
+                document.getElementById('list6-checkbox'),
+                document.getElementById('list7-checkbox'),
+                document.getElementById('list8-checkbox')
+            ];
+
+            const generatedList = document.getElementById('generated-list');
+            generatedList.innerHTML = ''; // Clear previous items
+
+            selectedLists.length = 0; // Clear the selected lists
+
+            for (let i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    const listName = checkboxes[i].parentNode.textContent.trim();
+                    const listData = await loadList(`list${i + 1}.txt`);
+                    selectedLists.push({ name: listName, data: listData });
+                }
+            }
+
+            const numItems = parseInt(document.getElementById('num-items').value);
+            for (let i = 0; i < numItems; i++) {
+                if (selectedLists.length > 0) {
+                    const randomListIndex = Math.floor(Math.random() * selectedLists.length);
+                    const randomList = selectedLists[randomListIndex];
+                    const randomData = randomList.data;
+                    const randomIndex = Math.floor(Math.random() * randomData.length);
+                    const randomItem = randomData[randomIndex];
+
+                    const listItem = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = randomItem.url; // Use the URL provided for the element
+                    link.textContent = `${randomList.name}: ${randomItem.name}`;
+                    link.target = "_blank"; // Open in a new tab
+                    listItem.appendChild(link);
+                    generatedList.appendChild(listItem);
+
+                    const addButton = document.createElement('button');
+                    addButton.textContent = '+';
+                    addButton.style.fontSize = '12px'; // Smaller font size
+                    addButton.style.padding = '2px 4px'; // Smaller padding
+                    addButton.addEventListener('click', function () {
+                        bonusItems.push(randomItem);
+                        updateBonusList();
+                        localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
+                    });
+                    listItem.appendChild(addButton);
+                }
+            }
+        });
+
+        function updateBonusList() {
+            const bonusList = document.getElementById('bonus-list');
+            bonusList.innerHTML = '';
+
+            for (let i = 0; i < bonusItems.length; i++) {
+                const bonusItem = bonusItems[i];
+                const bonusListItem = document.createElement('li');
+                const bonusLink = document.createElement('a');
+                bonusLink.href = bonusItem.url; // Use the URL provided for the bonus item
+                bonusLink.textContent = `Bonus: ${bonusItem.name}`;
+                bonusLink.target = "_blank"; // Open in a new tab
+                bonusListItem.appendChild(bonusLink);
+
+                const minusButton = document.createElement('button');
+                minusButton.textContent = '-';
+                minusButton.style.fontSize = '12px'; // Smaller font size
+                minusButton.style.padding = '2px 4px'; // Smaller padding
+                minusButton.addEventListener('click', function () {
+                    bonusItems.splice(i, 1);
+                    updateBonusList();
+                    localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
+                });
+
+                bonusListItem.appendChild(minusButton);
+                bonusList.appendChild(bonusListItem);
+            }
+        }
+
+        async function loadList(filename) {
+            try {
+                const response = await fetch(filename);
+                if (!response.ok) {
+                    throw new Error('File not found');
+                }
+                const text = await response.text();
+                const lines = text.split('\n').map(item => item.trim()).filter(Boolean);
+                return lines.map(line => {
+                    const [name, url] = line.split('|');
+                    return { name, url };
+                });
+            } catch (error) {
+                console.error('Error loading the file:', error);
+                return [];
+            }
+        }
+    </script>
+</body>
+</html>
