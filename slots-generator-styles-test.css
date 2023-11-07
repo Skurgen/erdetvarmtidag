@@ -1,11 +1,6 @@
 <style>
     body {
-        font-family: Arial, sans-serif;
-        background-color: #f0f0f0;
-        text-align: center;
-        margin: 0;
-        padding: 0;
-         background-image: url('images\densho.jpg'); /* Replace 'your-image-path.jpg' with the path to your background image */
+         background-image: url('Images\densho.jpg'); /* Replace 'your-image-path.jpg' with the path to your background image */
     background-size: cover; /* This scales the image to cover the entire body element */
     background-repeat: no-repeat; /* This prevents the image from repeating */
     background-attachment: fixed; /* This makes the background image fixed while scrolling */
