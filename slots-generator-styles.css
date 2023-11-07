@@ -14,7 +14,7 @@ body {
     margin: 20px auto;
     padding: 20px;
     /*background-color: #fff;*/
-    background-color: rgba(255, 255, 255, 0.8); /* Adjust the alpha (fourth) value as needed */
+    background-color: rgba(255, 255, 255, 0.6); /* Adjust the alpha (fourth) value as needed */
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     text-align: left;
