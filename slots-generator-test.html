@@ -3,36 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="slots-generator-styles-test.css">
+    <link rel="stylesheet" href="slots-generator-styles.css">
+    <style>
+        .item-box {
+            display: inline-block;
+            border: 1px solid #ccc;
+            padding: 5px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .item-box.selected {
+            background-color: #007bff;
+            color: #fff;
+        }
+    </style>
     <title>Slots Generator</title>
 </head>
 <body>
     <div class="container">
-      <div class="left-column">
         <h1>Slots Generator</h1>
 
         <h2>Select Items:</h2>
-            <div class="checkbox-pair">
-                <div class="item-box" id="list1-box">Hacksaw</div>
-                  <div class="item-box" id="list2-box">Pragmatic</div>
-                
-            </div>
-            <div class="checkbox-pair">
-                <div class="item-box" id="list3-box">Play n' Go</div>
-               
-                    <div class="item-box" id="list4-box">Nolimit City</div>
-            
-            </div>
-            <div class="checkbox-pair">
-                <div class="item-box" id="list5-box">Thunderkick</div>
-              <div class="item-box" id="list6-box">Relax Gaming</div>
-           
-            </div>
-            <div class="checkbox-pair">
-                <div class="item-box" id="list7-box">Quickspin</div>
-                 <div class="item-box" id="list8-box">Push Gaming</div>
-            </div>
-        
+        <div class="item-box" id="list1-box"> Hacksaw </div>
+        <div class="item-box" id="list2-box"> Pragmatic </div>
+        <div class="item-box" id="list3-box"> Play n' Go </div>
+        <div class="item-box" id="list4-box"> Nolimit City </div>
+        <div class="item-box" id="list5-box"> Thunderkick </div>
+        <div class="item-box" id="list6-box"> Relax Gaming </div>
+        <div class="item-box" id="list7-box"> Quickspin </div>
+        <div class="item-box" id="list8-box"> Push Gaming </div>
 
         <h2>Generate Random Items:</h2>
         <label for="num-items">Number of Items:</label>
@@ -44,39 +43,25 @@
                 <h2>Generated Items:</h2>
                 <ul id="generated-list"></ul>
             </div>
-        </div>
-    </div>
-        <div class="right-column">
-              <div class="items-list">
+            <div class="items-list">
                 <h2>Bonus List:</h2>
                 <ul id="bonus-list">
                     <!-- Bonus items (if needed) can be added here -->
                 </ul>
             </div>
-            </div>
+        </div>
     </div>
 
     <button onclick="goBack()">Go Back</button>
 
     <script>
-
-
-        const itemBoxes = document.querySelectorAll('.item-box');
-          itemBoxes.forEach((box) => {
-          box.addEventListener('click', () => {
-          box.classList.toggle('selected');
-           });
-        });
-        
         function goBack() {
             window.history.back();
         }
 
-        
-
         const bonusItems = [];
         const selectedLists = [];
-         window.addEventListener('load', function () {
+        window.addEventListener('load', function () {
             const storedBonusItems = localStorage.getItem('bonusItems');
             if (storedBonusItems) {
                 bonusItems.push(...JSON.parse(storedBonusItems));
@@ -84,28 +69,30 @@
             }
         });
 
-       document.getElementById('generate-button').addEventListener('click', async function () {
-            const checkboxes = [];
-    itemBoxes.forEach((box) => {
-        if (box.classList.contains('selected')) {
-            checkboxes.push(box.textContent);
-        }
-    });
+        // Add click event listeners for item-box elements
+        const itemBoxes = document.querySelectorAll('.item-box');
+        itemBoxes.forEach(box => {
+            box.addEventListener('click', () => {
+                box.classList.toggle('selected');
+            });
+        });
 
+        document.getElementById('generate-button').addEventListener('click', async function () {
+            selectedLists.length = 0; // Clear the selected lists
+
+            // Populate the selectedLists array based on the selected item-boxes
+            itemBoxes.forEach((box, index) => {
+                if (box.classList.contains('selected')) {
+                    const listName = box.textContent.trim();
+                    const listData = await loadList(`list${index + 1}.txt`);
+                    selectedLists.push({ name: listName, data: listData });
+                }
+            });
+
+            const numItems = parseInt(document.getElementById('num-items').value);
             const generatedList = document.getElementById('generated-list');
             generatedList.innerHTML = ''; // Clear previous items
 
-            selectedLists.length = 0; // Clear the selected lists
-
-            for (let i = 0; i < checkboxes.length; i++) {
-                if (checkboxes[i].checked) {
-                    const listName = checkboxes[i].parentNode.textContent.trim();
-                    const listData = await loadList(`list${i + 1}.txt`);
-                    selectedLists.push({ name: listName, data: listData });
-                }
-            }
-
-            const numItems = parseInt(document.getElementById('num-items').value);
             for (let i = 0; i < numItems; i++) {
                 if (selectedLists.length > 0) {
                     const randomListIndex = Math.floor(Math.random() * selectedLists.length);
@@ -120,7 +107,6 @@
                     link.textContent = `${randomList.name}: ${randomItem.name}`;
                     link.target = "_blank"; // Open in a new tab
                     listItem.appendChild(link);
-                    generatedList.appendChild(listItem);
 
                     const addButton = document.createElement('button');
                     addButton.textContent = '+';
@@ -131,7 +117,9 @@
                         updateBonusList();
                         localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
                     });
+
                     listItem.appendChild(addButton);
+                    generatedList.appendChild(listItem);
                 }
             }
         });
