@@ -13,36 +13,24 @@
 
         <h2>Select Items:</h2>
             <div class="checkbox-pair">
-                <label>
-                    <input type="checkbox" id="list1-checkbox"> Hacksaw
-                </label>
-                <label>
-                    <input type="checkbox" id="list2-checkbox"> Pragmatic
-                </label>
+                <div class="item-box" id="list1-box">Hacksaw</div>
+                  <div class="item-box" id="list2-box">Pragmatic</div>
+                
             </div>
             <div class="checkbox-pair">
-                <label>
-                    <input type="checkbox" id="list3-checkbox"> Play n' Go
-                </label>
-                <label>
-                    <input type="checkbox" id="list4-checkbox"> Nolimit City
-                </label>
+                <div class="item-box" id="list2-box">Play n' Go</div>
+               
+                    <div class="item-box" id="list2-box">Nolimit City</div>
+            
             </div>
             <div class="checkbox-pair">
-                <label>
-                    <input type="checkbox" id="list5-checkbox"> Thunderkick
-                </label>
-                <label>
-                    <input type="checkbox" id="list6-checkbox"> Relax Gaming
-                </label>
+                <div class="item-box" id="list2-box">Thunderkick</div>
+              <div class="item-box" id="list1-box">Relax Gaming</div>
+           
             </div>
             <div class="checkbox-pair">
-                <label>
-                    <input type="checkbox" id="list7-checkbox"> Quickspin
-                </label>
-                <label>
-                    <input type="checkbox" id="list8-checkbox"> Push Gaming
-                </label>
+                <div class="item-box" id="list2-box">Quickspin</div>
+                 <div class="item-box" id="list2-box">Push Gaming</div>
             </div>
         
 
@@ -71,6 +59,15 @@
     <button onclick="goBack()">Go Back</button>
 
     <script>
+
+
+        const itemBoxes = document.querySelectorAll('.item-box');
+          itemBoxes.forEach((box) => {
+          box.addEventListener('click', () => {
+          box.classList.toggle('selected');
+           });
+        });
+        
         function goBack() {
             window.history.back();
         }
