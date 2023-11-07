@@ -1,57 +1,58 @@
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f0f0f0;
-        text-align: center;
-        margin: 0;
-        padding: 0;
-    }
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('images/densho.jpg'); /* Specify the correct path to your image */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
 
-    .container {
-        max-width: 400px;
-        margin: 20px auto;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        text-align: left;
-    }
+.container {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    text-align: left;
+}
 
-    h1 {
-        color: #333;
-    }
+h1 {
+    color: #333;
+}
 
-    label {
-        display: block;
-        margin: 5px 0;
-    }
+label {
+    display: block;
+    margin: 5px 0;
+}
 
-    button {
-        background-color: #007BFF;
-        color: #fff;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 20px;
-    }
+button {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
 
-    button:hover {
-        background-color: #0056b3;
-    }
+button:hover {
+    background-color: #0056b3;
+}
 
-    ul {
-        list-style: none;
-        padding: 0;
-    }
+ul {
+    list-style: none;
+    padding: 0;
+}
 
-    li {
-        margin: 5px 0;
-    }
+li {
+    margin: 5px 0;
+}
 
-    /* Styles for smaller buttons */
-    button.small-button {
-        font-size: 12px;
-        padding: 4px 8px;
-    }
-</style>
+/* Styles for smaller buttons */
+button.small-button {
+    font-size: 12px;
+    padding: 4px 8px;
+}
