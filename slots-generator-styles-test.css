@@ -10,14 +10,24 @@ body {
 }
 
 .container {
-    max-width: 400px;
+    display: flex; /* Use Flexbox to create a two-column layout */
+    max-width: 800px; /* Adjust the total container width as needed */
     margin: 20px auto;
     padding: 20px;
-    /*background-color: #fff;*/
-    background-color: rgba(255, 255, 255, 0.6); /* Adjust the alpha (fourth) value as needed */
+    background-color: rgba(255, 255, 255, 0.6);
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     text-align: left;
+}
+
+.left-column {
+    flex: 1; /* Take up 50% of the container width */
+    padding: 0 10px; /* Add some spacing between the columns */
+}
+
+.right-column {
+    flex: 1; /* Take up 50% of the container width */
+    padding: 0 10px; /* Add some spacing between the columns */
 }
 
 h1 {
