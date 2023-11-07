@@ -52,18 +52,21 @@ label {
     margin: 3px 0;
 }
 
- .item-box {
-            display: inline-block;
-            border: 1px solid #ccc;
-            padding: 5px;
-            margin: 5px;
-            cursor: pointer;
-        }
+.item-box {
+    display: inline-block;
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
 .item-box.selected {
-            background-color: #007bff;
-            color: #fff;
-        }
+    background-color: #007BFF;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+}
 
 button {
     background-color: #007BFF;
