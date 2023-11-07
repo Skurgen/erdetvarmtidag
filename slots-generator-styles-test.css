@@ -11,7 +11,7 @@ body {
 
 .container {
     display: flex; /* Use Flexbox to create a two-column layout */
-    max-width: 800px; /* Adjust the total container width as needed */
+    max-width: 820px; /* Adjust the total container width as needed */
     margin: 20px auto;
     padding: 20px;
     background-color: rgba(255, 255, 255, 0.6);
