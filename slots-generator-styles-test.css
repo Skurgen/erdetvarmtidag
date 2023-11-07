@@ -1,10 +1,10 @@
 <style>
     body {
-      background-image: url('Images/densho.jpg'); /* Replace 'your-image-path.jpg' with the path to your background image */
-      background-size: cover; /* This scales the image to cover the entire body element */
-      background-repeat: no-repeat; /* This prevents the image from repeating */
-      background-attachment: fixed; /* This makes the background image fixed while scrolling */
-    }
+    background-image: url('Images/densho.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
 
     .container {
         max-width: 400px;
