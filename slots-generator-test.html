@@ -84,30 +84,57 @@
             }
         });
 
-        document.getElementById('generate-button').addEventListener('click', function () {
-    const selectedItems = [];
+       document.getElementById('generate-button').addEventListener('click', async function () {
+            const checkboxes = [];
     itemBoxes.forEach((box) => {
         if (box.classList.contains('selected')) {
-            selectedItems.push(box.textContent);
+            checkboxes.push(box.textContent);
         }
     });
 
-    const generatedList = document.getElementById('generated-list');
-    generatedList.innerHTML = ''; // Clear previous items
+            const generatedList = document.getElementById('generated-list');
+            generatedList.innerHTML = ''; // Clear previous items
 
-    const numItems = parseInt(document.getElementById('num-items').value);
+            selectedLists.length = 0; // Clear the selected lists
 
-    for (let i = 0; i < numItems; i++) {
-        if (selectedItems.length > 0) {
-            const randomIndex = Math.floor(Math.random() * selectedItems.length);
-            const selectedItem = selectedItems[randomIndex];
+            for (let i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    const listName = checkboxes[i].parentNode.textContent.trim();
+                    const listData = await loadList(`list${i + 1}.txt`);
+                    selectedLists.push({ name: listName, data: listData });
+                }
+            }
 
-            const listItem = document.createElement('li');
-            listItem.textContent = selectedItem;
-            generatedList.appendChild(listItem);
-        }
-    }
-});
+            const numItems = parseInt(document.getElementById('num-items').value);
+            for (let i = 0; i < numItems; i++) {
+                if (selectedLists.length > 0) {
+                    const randomListIndex = Math.floor(Math.random() * selectedLists.length);
+                    const randomList = selectedLists[randomListIndex];
+                    const randomData = randomList.data;
+                    const randomIndex = Math.floor(Math.random() * randomData.length);
+                    const randomItem = randomData[randomIndex];
+
+                    const listItem = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = randomItem.url; // Use the URL provided for the element
+                    link.textContent = `${randomList.name}: ${randomItem.name}`;
+                    link.target = "_blank"; // Open in a new tab
+                    listItem.appendChild(link);
+                    generatedList.appendChild(listItem);
+
+                    const addButton = document.createElement('button');
+                    addButton.textContent = '+';
+                    addButton.style.fontSize = '12px'; // Smaller font size
+                    addButton.style.padding = '2px 4px'; // Smaller padding
+                    addButton.addEventListener('click', function () {
+                        bonusItems.push(randomItem);
+                        updateBonusList();
+                        localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
+                    });
+                    listItem.appendChild(addButton);
+                }
+            }
+        });
 
         function updateBonusList() {
             const bonusList = document.getElementById('bonus-list');
