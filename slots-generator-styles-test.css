@@ -30,6 +30,23 @@ body {
     padding: 0 10px; /* Add some spacing between the columns */
 }
 
+.checkbox-pairs {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.checkbox-pair {
+    flex: 1; /* Each pair takes up 50% of the available width */
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+}
+
+.checkbox-pair label {
+    flex: 1; /* Each label takes up 50% of the pair width */
+    margin: 0;
+}
+
 h1 {
     color: #333;
 }
