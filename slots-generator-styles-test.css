@@ -39,7 +39,7 @@ body {
     flex: 1; /* Each pair takes up 50% of the available width */
     display: flex;
     justify-content: space-between;
-    margin: 5px 0;
+    margin: 2px 0;
     width: 50%; /* Make sure each pair takes up 50% width */
 }
 
