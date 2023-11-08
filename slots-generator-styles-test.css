@@ -20,11 +20,15 @@ body {
     text-align: left;
 }
 
-.label-container label:nth-child(even) {
+.label-container {
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin-right: 2px;
+    margin-bottom: 10px; /* Add spacing between label pairs */
+}
+
+.label-container label:nth-child(even) {
+    margin-right: 10px; /* Add spacing between label pairs */
 }
 
 .left-column {
