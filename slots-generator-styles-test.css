@@ -25,7 +25,7 @@ body {
             flex-direction: row;
             align-items: center;
             margin-right: 20px;
-        }
+}
 
 .left-column {
     flex: 1; /* Take up 50% of the container width */
