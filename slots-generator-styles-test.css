@@ -20,6 +20,13 @@ body {
     text-align: left;
 }
 
+ .label-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-right: 20px;
+        }
+
 .left-column {
     flex: 1; /* Take up 50% of the container width */
     padding: 0 10px; /* Add some spacing between the columns */
