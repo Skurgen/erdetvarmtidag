@@ -29,7 +29,7 @@ body {
 
 .label-container label {
     margin-right: 10px; /* Add spacing between labels inside the label containers */
- }
+}
 
 .left-column {
     flex: 1; /* Take up 50% of the container width */
