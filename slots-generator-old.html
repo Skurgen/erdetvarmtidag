@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="slots-generator-styles.css">
+    <style>
+        .selected-label {
+            font-weight: bold;
+        }
+
+        .unselected-label {
+            opacity: 0.5;
+        }
+    </style>
     <title>Slots Generator</title>
 </head>
 <body>
@@ -12,28 +21,28 @@
 
         <h2>Select Items:</h2>
         <label>
-            <input type="checkbox" id="list1-checkbox"> Hacksaw
+            <span id="list1-label" class="unselected-label" onclick="toggleSelection(1)">Hacksaw</span>
         </label>
         <label>
-            <input type="checkbox" id="list2-checkbox"> Pragmatic
+            <span id="list2-label" class="unselected-label" onclick="toggleSelection(2)">Pragmatic</span>
         </label>
         <label>
-            <input type="checkbox" id="list3-checkbox"> Play n' Go
+            <span id="list3-label" class="unselected-label" onclick="toggleSelection(3)">Play n' Go</span>
         </label>
         <label>
-            <input type="checkbox" id="list4-checkbox"> Nolimit City
+            <span id="list4-label" class="unselected-label" onclick="toggleSelection(4)">Nolimit City</span>
         </label>
         <label>
-            <input type="checkbox" id="list5-checkbox"> Thunderkick
+            <span id="list5-label" class="unselected-label" onclick="toggleSelection(5)">Thunderkick</span>
         </label>
         <label>
-            <input type="checkbox" id="list6-checkbox"> Relax Gaming
+            <span id="list6-label" class="unselected-label" onclick="toggleSelection(6)">Relax Gaming</span>
         </label>
         <label>
-            <input type="checkbox" id="list7-checkbox"> Quickspin
-        </label> 
+            <span id="list7-label" class="unselected-label" onclick="toggleSelection(7)">Quickspin</span>
+        </label>
         <label>
-            <input type="checkbox" id="list8-checkbox"> Push Gaming
+            <span id="list8-label" class="unselected-label" onclick="toggleSelection(8)">Push Gaming</span>
         </label>
 
         <h2>Generate Random Items:</h2>
@@ -62,11 +71,22 @@
             window.history.back();
         }
 
-        
-
         const bonusItems = [];
         const selectedLists = [];
-         window.addEventListener('load', function () {
+
+        function toggleSelection(listIndex) {
+            const label = document.getElementById(`list${listIndex}-label`);
+            const isChecked = label.classList.contains('selected-label');
+            if (isChecked) {
+                label.classList.remove('selected-label');
+                label.classList.add('unselected-label');
+            } else {
+                label.classList.remove('unselected-label');
+                label.classList.add('selected-label');
+            }
+        }
+
+        window.addEventListener('load', function () {
             const storedBonusItems = localStorage.getItem('bonusItems');
             if (storedBonusItems) {
                 bonusItems.push(...JSON.parse(storedBonusItems));
@@ -75,26 +95,16 @@
         });
 
         document.getElementById('generate-button').addEventListener('click', async function () {
-            const checkboxes = [
-                document.getElementById('list1-checkbox'),
-                document.getElementById('list2-checkbox'),
-                document.getElementById('list3-checkbox'),
-                document.getElementById('list4-checkbox'),
-                document.getElementById('list5-checkbox'),
-                document.getElementById('list6-checkbox'),
-                document.getElementById('list7-checkbox'),
-                document.getElementById('list8-checkbox')
-            ];
-
             const generatedList = document.getElementById('generated-list');
             generatedList.innerHTML = ''; // Clear previous items
 
             selectedLists.length = 0; // Clear the selected lists
 
-            for (let i = 0; i < checkboxes.length; i++) {
-                if (checkboxes[i].checked) {
-                    const listName = checkboxes[i].parentNode.textContent.trim();
-                    const listData = await loadList(`list${i + 1}.txt`);
+            for (let i = 1; i <= 8; i++) {
+                const label = document.getElementById(`list${i}-label`);
+                if (label.classList.contains('selected-label')) {
+                    const listName = label.textContent;
+                    const listData = await loadList(`list${i}.txt`);
                     selectedLists.push({ name: listName, data: listData });
                 }
             }
@@ -114,7 +124,6 @@
                     link.textContent = `${randomList.name}: ${randomItem.name}`;
                     link.target = "_blank"; // Open in a new tab
                     listItem.appendChild(link);
-                    generatedList.appendChild(listItem);
 
                     const addButton = document.createElement('button');
                     addButton.textContent = '+';
@@ -126,6 +135,8 @@
                         localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
                     });
                     listItem.appendChild(addButton);
+
+                    generatedList.appendChild(listItem);
                 }
             }
         });
