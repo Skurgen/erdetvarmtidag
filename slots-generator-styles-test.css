@@ -20,11 +20,11 @@ body {
     text-align: left;
 }
 
- .label-container {
+.label-container {
     display: flex;
-  flex-direction: row;
+    flex-direction: row;
     align-items: center;
-   margin-right: 20px;
+    margin-right: 20px;
 }
 
 .left-column {
