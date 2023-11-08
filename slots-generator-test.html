@@ -3,7 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="slots-generator-styles-test.css">
+    <link rel="stylesheet" href="slots-generator-styles.css">
+    <style>
+        .selected-label {
+            font-weight: bold;
+        }
+
+        .unselected-label {
+            opacity: 0.5;
+        }
+    </style>
     <title>Slots Generator</title>
 </head>
 <body>
@@ -11,14 +20,30 @@
         <h1>Slots Generator</h1>
 
         <h2>Select Items:</h2>
-        <div class="item-box" id="list1-box"> Hacksaw </div>
-        <div class="item-box" id="list2-box"> Pragmatic </div>
-        <div class="item-box" id="list3-box"> Play n' Go </div>
-        <div class="item-box" id="list4-box"> Nolimit City </div>
-        <div class="item-box" id="list5-box"> Thunderkick </div>
-        <div class="item-box" id="list6-box"> Relax Gaming </div>
-        <div class="item-box" id="list7-box"> Quickspin </div>
-        <div class="item-box" id="list8-box"> Push Gaming </div>
+        <label>
+            <span id="list1-label" class="unselected-label" onclick="toggleSelection(1)">Hacksaw</span>
+        </label>
+        <label>
+            <span id="list2-label" class="unselected-label" onclick="toggleSelection(2)">Pragmatic</span>
+        </label>
+        <label>
+            <span id="list3-label" class="unselected-label" onclick="toggleSelection(3)">Play n' Go</span>
+        </label>
+        <label>
+            <span id="list4-label" class="unselected-label" onclick="toggleSelection(4)">Nolimit City</span>
+        </label>
+        <label>
+            <span id="list5-label" class="unselected-label" onclick="toggleSelection(5)">Thunderkick</span>
+        </label>
+        <label>
+            <span id="list6-label" class="unselected-label" onclick="toggleSelection(6)">Relax Gaming</span>
+        </label>
+        <label>
+            <span id="list7-label" class="unselected-label" onclick="toggleSelection(7)">Quickspin</span>
+        </label>
+        <label>
+            <span id="list8-label" class="unselected-label" onclick="toggleSelection(8)">Push Gaming</span>
+        </label>
 
         <h2>Generate Random Items:</h2>
         <label for="num-items">Number of Items:</label>
@@ -48,6 +73,19 @@
 
         const bonusItems = [];
         const selectedLists = [];
+
+        function toggleSelection(listIndex) {
+            const label = document.getElementById(`list${listIndex}-label`);
+            const isChecked = label.classList.contains('selected-label');
+            if (isChecked) {
+                label.classList.remove('selected-label');
+                label.classList.add('unselected-label');
+            } else {
+                label.classList.remove('unselected-label');
+                label.classList.add('selected-label');
+            }
+        }
+
         window.addEventListener('load', function () {
             const storedBonusItems = localStorage.getItem('bonusItems');
             if (storedBonusItems) {
@@ -56,63 +94,51 @@
             }
         });
 
-        // Add click event listeners for item-box elements
-        const itemBoxes = document.querySelectorAll('.item-box');
-        itemBoxes.forEach(box => {
-            box.addEventListener('click', () => {
-                box.classList.toggle('selected');
-            });
-        });
+        document.getElementById('generate-button').addEventListener('click', async function () {
+            const generatedList = document.getElementById('generated-list');
+            generatedList.innerHTML = ''; // Clear previous items
 
-        document.getElementById('generate-button').addEventListener('click', function () {
-            async function generateItems() {
-                selectedLists.length = 0; // Clear the selected lists
+            selectedLists.length = 0; // Clear the selected lists
 
-                // Populate the selectedLists array based on the selected item-boxes
-                itemBoxes.forEach((box, index) => {
-                    if (box.classList.contains('selected')) {
-                        const listName = box.textContent.trim();
-                        const listData = await loadList(`list${index + 1}.txt`);
-                        selectedLists.push({ name: listName, data: listData });
-                    }
-                });
-
-                const numItems = parseInt(document.getElementById('num-items').value);
-                const generatedList = document.getElementById('generated-list');
-                generatedList.innerHTML = ''; // Clear previous items
-
-                for (let i = 0; i < numItems; i++) {
-                    if (selectedLists.length > 0) {
-                        const randomListIndex = Math.floor(Math.random() * selectedLists.length);
-                        const randomList = selectedLists[randomListIndex];
-                        const randomData = randomList.data;
-                        const randomIndex = Math.floor(Math.random() * randomData.length);
-                        const randomItem = randomData[randomIndex];
-
-                        const listItem = document.createElement('li');
-                        const link = document.createElement('a');
-                        link.href = randomItem.url; // Use the URL provided for the element
-                        link.textContent = `${randomList.name}: ${randomItem.name}`;
-                        link.target = "_blank"; // Open in a new tab
-                        listItem.appendChild(link);
-
-                        const addButton = document.createElement('button');
-                        addButton.textContent = '+';
-                        addButton.style.fontSize = '12px'; // Smaller font size
-                        addButton.style.padding = '2px 4px'; // Smaller padding
-                        addButton.addEventListener('click', function () {
-                            bonusItems.push(randomItem);
-                            updateBonusList();
-                            localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
-                        });
-
-                        listItem.appendChild(addButton);
-                        generatedList.appendChild(listItem);
-                    }
+            for (let i = 1; i <= 8; i++) {
+                const label = document.getElementById(`list${i}-label`);
+                if (label.classList.contains('selected-label')) {
+                    const listName = label.textContent;
+                    const listData = await loadList(`list${i}.txt`);
+                    selectedLists.push({ name: listName, data: listData });
                 }
             }
 
-            generateItems();
+            const numItems = parseInt(document.getElementById('num-items').value);
+            for (let i = 0; i < numItems; i++) {
+                if (selectedLists.length > 0) {
+                    const randomListIndex = Math.floor(Math.random() * selectedLists.length);
+                    const randomList = selectedLists[randomListIndex];
+                    const randomData = randomList.data;
+                    const randomIndex = Math.floor(Math.random() * randomData.length);
+                    const randomItem = randomData[randomIndex];
+
+                    const listItem = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = randomItem.url; // Use the URL provided for the element
+                    link.textContent = `${randomList.name}: ${randomItem.name}`;
+                    link.target = "_blank"; // Open in a new tab
+                    listItem.appendChild(link);
+
+                    const addButton = document.createElement('button');
+                    addButton.textContent = '+';
+                    addButton.style.fontSize = '12px'; // Smaller font size
+                    addButton.style.padding = '2px 4px'; // Smaller padding
+                    addButton.addEventListener('click', function () {
+                        bonusItems.push(randomItem);
+                        updateBonusList();
+                        localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
+                    });
+                    listItem.appendChild(addButton);
+
+                    generatedList.appendChild(listItem);
+                }
+            }
         });
 
         function updateBonusList() {
