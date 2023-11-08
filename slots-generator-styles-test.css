@@ -61,9 +61,9 @@ body {
     margin: 0;
 }
 
-.start-container {
+ .start-container {
     display: flex;
-    align-items: right;
+    align-items: center;
 }
 
 #start-label {
@@ -75,7 +75,7 @@ body {
 }
 
 #bonus-label {
-    float: left;
+    float: right;
 }
 
 h1 {
