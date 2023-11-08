@@ -30,7 +30,13 @@ body {
     padding: 0 10px; /* Add some spacing between the columns */
 }
 
+ .selected-label {
+     font-weight: bold;
+}
 
+.unselected-label {
+      opacity: 0.5;
+}
 
 .checkbox-pair {
     display: flex;
