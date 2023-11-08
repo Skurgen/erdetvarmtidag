@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="slots-generator-styles-test.css">
+    <link rel="stylesheet" href="slots-generator-styles.css">
   <title>Slots Generator</title>
 </head>
 <body>
@@ -41,7 +41,7 @@
         <label>
             <span id="list8-label" class="unselected-label" onclick="toggleSelection(8)">Push Gaming</span>
         </label>
-              </div>
+               </div>
 
         <h2>Generate Random Items:</h2>
         <label for="num-items">Number of Items:</label>
@@ -57,15 +57,15 @@
             </div>
             <div class="right-column">
             <div class="items-list">
-                <h2>Bonus List:</h2>
+                <h2 id="bonus-label">Bonus List:</h2>
                 <ul id="bonus-list">
                     <!-- Bonus items (if needed) can be added here -->
                 </ul>
                 </div>
-                <div class="start-box">
-                <p>Start</p>
-                <input type="text" id="start-input" maxlength="5">
-              </div>
+                <div class="start-container">
+                    <label for="start-input" id="start-label">Start:</label>
+                    <input type="number" id="start-input" min="1" value="1">
+                </div>
             </div>
         </div>
     </div>
