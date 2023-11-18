@@ -73,8 +73,18 @@
         }
 
         function updateBonusSuggestions(suggestions) {
-            // Display the suggestions in a dropdown or any other way you prefer
-            console.log('Suggestions:', suggestions);
+            const suggestionList = document.getElementById('suggestion-list');
+            suggestionList.innerHTML = '';
+
+            suggestions.forEach(suggestion => {
+                const suggestionItem = document.createElement('li');
+                suggestionItem.textContent = suggestion;
+                suggestionItem.addEventListener('click', function () {
+                    bonusInput.value = suggestion;
+                    suggestionList.innerHTML = ''; // Clear suggestions
+                });
+                suggestionList.appendChild(suggestionItem);
+            });
         }
 
         window.addEventListener('load', function () {
