@@ -13,7 +13,34 @@
 
             <h2>Select Items:</h2>
             <div class="label-container">
-                <!-- ... (unchanged) ... -->
+                <label>
+                    <span id="list1-label" class="unselected-label" onclick="toggleSelection(1)">Hacksaw</span>
+                </label>
+                <label>
+                    <span id="list2-label" class="unselected-label" onclick="toggleSelection(2)">Pragmatic</span>
+                </label>
+                <label>
+                    <span id="list3-label" class="unselected-label" onclick="toggleSelection(3)">Play n' Go</span>
+                </label>
+            </div>
+            <div class="label-container">
+                <label>
+                    <span id="list4-label" class="unselected-label" onclick="toggleSelection(4)">Nolimit City</span>
+                </label>
+                <label>
+                    <span id="list5-label" class="unselected-label" onclick="toggleSelection(5)">Thunderkick</span>
+                </label>
+                <label>
+                    <span id="list6-label" class="unselected-label" onclick="toggleSelection(6)">Relax Gaming</span>
+                </label>
+            </div>
+            <div class="label-container">
+                <label>
+                    <span id="list7-label" class="unselected-label" onclick="toggleSelection(7)">Quickspin</span>
+                </label>  
+                <label>
+                    <span id="list8-label" class="unselected-label" onclick="toggleSelection(8)">Push Gaming</span>
+                </label>
             </div>
 
             <h2>Generate Random Items:</h2>
@@ -31,6 +58,7 @@
         <div class="right-column">
             <!-- Add the input text box above the "Bonus List" -->
             <input type="text" id="bonus-input" placeholder="Search Bonus Items">
+            <ul id="suggestion-list"></ul>
 
             <div class="items-list">
                 <h2>Bonus List:</h2>
@@ -51,14 +79,19 @@
         const bonusItems = [];
         const selectedLists = [];
 
-        // Add an event listener for the bonus input
-        const bonusInput = document.getElementById('bonus-input');
-        bonusInput.addEventListener('input', function () {
-            const searchText = bonusInput.value.toLowerCase();
-            const suggestions = getAllSuggestions().filter(item =>
-                item.toLowerCase().includes(searchText)
-            );
-            updateBonusSuggestions(suggestions);
+        // Ensure the script runs after the DOM has fully loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add an event listener for the bonus input
+            const bonusInput = document.getElementById('bonus-input');
+            const suggestionList = document.getElementById('suggestion-list');
+
+            bonusInput.addEventListener('input', function () {
+                const searchText = bonusInput.value.toLowerCase();
+                const suggestions = getAllSuggestions().filter(item =>
+                    item.toLowerCase().includes(searchText)
+                );
+                updateBonusSuggestions(suggestions);
+            });
         });
 
         function getAllSuggestions() {
