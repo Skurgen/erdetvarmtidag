@@ -4,70 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="slots-generator-styles.css">
-  <title>Slots Generator</title>
+    <title>Slots Generator</title>
 </head>
 <body>
     <div class="container">
         <div class="left-column">
-        <h1>Slots Generator</h1>
-
-        <h2>Select Items:</h2>
-            <div class="label-container">
-        <label>
-            <span id="list1-label" class="unselected-label" onclick="toggleSelection(1)">Hacksaw</span>
-        </label>
-        <label>
-            <span id="list2-label" class="unselected-label" onclick="toggleSelection(2)">Pragmatic</span>
-        </label>
-        <label>
-            <span id="list3-label" class="unselected-label" onclick="toggleSelection(3)">Play n' Go</span>
-        </label>
-                </div>
-            <div class="label-container">
-        <label>
-            <span id="list4-label" class="unselected-label" onclick="toggleSelection(4)">Nolimit City</span>
-        </label>
-        <label>
-            <span id="list5-label" class="unselected-label" onclick="toggleSelection(5)">Thunderkick</span>
-        </label>
-        <label>
-            <span id="list6-label" class="unselected-label" onclick="toggleSelection(6)">Relax Gaming</span>
-        </label>
-                </div>
-             <div class="label-container">
-        <label>
-            <span id="list7-label" class="unselected-label" onclick="toggleSelection(7)">Quickspin</span>
-        </label>  
-        <label>
-            <span id="list8-label" class="unselected-label" onclick="toggleSelection(8)">Push Gaming</span>
-        </label>
-               </div>
-
-        <h2>Generate Random Items:</h2>
-        <label for="num-items">Number of Items:</label>
-        <input type="number" id="num-items" min="1" value="1">
-        <button id="generate-button">Generate</button>
-
-        <div class="lists-container">
+            <!-- ... (existing code) ... -->
+        </div>
+        <div class="right-column">
             <div class="items-list">
-                <h2>Generated Items:</h2>
-                <ul id="generated-list"></ul>
-            </div>
-            </div>
-            </div>
-            <div class="right-column">
-            <div class="items-list">
-                <div class="start-container">
-                    <label for="start-input" id="start-label">Start:</label>
-                    <input type="number" id="start-input" min="1" value="1">
-                </div>
-                <h2 id="bonus-label">Bonus List:</h2>
+                <h2>Bonus List:</h2>
+
+                <!-- Add an input text box for bonus suggestions -->
+                <input type="text" id="bonus-input" placeholder="Type to add to Bonus List">
+                <div id="suggestion-list"></div>
+
                 <ul id="bonus-list">
                     <!-- Bonus items (if needed) can be added here -->
                 </ul>
-                </div>
             </div>
         </div>
+    </div>
 
     <button onclick="goBack()">Go Back</button>
 
@@ -145,6 +102,47 @@
                 }
             }
         });
+
+        // Combine names from all list.txt files
+        const allNames = getAllNames();
+        
+        // Add event listener for bonus input box
+        const bonusInput = document.getElementById('bonus-input');
+        const suggestionList = document.getElementById('suggestion-list');
+
+        bonusInput.addEventListener('input', function () {
+            const inputValue = bonusInput.value.toLowerCase();
+            const suggestions = getSuggestions(inputValue);
+            displaySuggestions(suggestions);
+        });
+
+        function getSuggestions(input) {
+            return allNames.filter(name => name.toLowerCase().includes(input));
+        }
+
+        function displaySuggestions(suggestions) {
+            suggestionList.innerHTML = '';
+            suggestions.forEach(suggestion => {
+                const suggestionItem = document.createElement('div');
+                suggestionItem.textContent = suggestion;
+                suggestionItem.addEventListener('click', function () {
+                    addToBonusList(suggestion);
+                });
+                suggestionList.appendChild(suggestionItem);
+            });
+        }
+
+        function addToBonusList(name) {
+            const bonusItem = {
+                name: name,
+                url: '' // You can set a default URL or leave it empty
+            };
+            bonusItems.push(bonusItem);
+            updateBonusList();
+            localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
+            bonusInput.value = ''; // Clear input after adding to the bonus list
+            suggestionList.innerHTML = ''; // Clear suggestion list
+        }
 
         function updateBonusList() {
             const bonusList = document.getElementById('bonus-list');
