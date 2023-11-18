@@ -9,16 +9,31 @@
 <body>
     <div class="container">
         <div class="left-column">
-            <!-- ... (existing code) ... -->
+            <h1>Slots Generator</h1>
+
+            <h2>Select Items:</h2>
+            <div class="label-container">
+                <!-- ... (unchanged) ... -->
+            </div>
+
+            <h2>Generate Random Items:</h2>
+            <label for="num-items">Number of Items:</label>
+            <input type="number" id="num-items" min="1" value="1">
+            <button id="generate-button">Generate</button>
+
+            <div class="lists-container">
+                <div class="items-list">
+                    <h2>Generated Items:</h2>
+                    <ul id="generated-list"></ul>
+                </div>
+            </div>
         </div>
         <div class="right-column">
+            <!-- Add the input text box above the "Bonus List" -->
+            <input type="text" id="bonus-input" placeholder="Search Bonus Items">
+
             <div class="items-list">
                 <h2>Bonus List:</h2>
-
-                <!-- Add an input text box for bonus suggestions -->
-                <input type="text" id="bonus-input" placeholder="Type to add to Bonus List">
-                <div id="suggestion-list"></div>
-
                 <ul id="bonus-list">
                     <!-- Bonus items (if needed) can be added here -->
                 </ul>
@@ -36,16 +51,30 @@
         const bonusItems = [];
         const selectedLists = [];
 
-        function toggleSelection(listIndex) {
-            const label = document.getElementById(`list${listIndex}-label`);
-            const isChecked = label.classList.contains('selected-label');
-            if (isChecked) {
-                label.classList.remove('selected-label');
-                label.classList.add('unselected-label');
-            } else {
-                label.classList.remove('unselected-label');
-                label.classList.add('selected-label');
+        // Add an event listener for the bonus input
+        const bonusInput = document.getElementById('bonus-input');
+        bonusInput.addEventListener('input', function () {
+            const searchText = bonusInput.value.toLowerCase();
+            const suggestions = getAllSuggestions().filter(item =>
+                item.toLowerCase().includes(searchText)
+            );
+            updateBonusSuggestions(suggestions);
+        });
+
+        function getAllSuggestions() {
+            const allSuggestions = [];
+            for (let i = 1; i <= 8; i++) {
+                const listData = selectedLists.find(list => list.name === `list${i}`);
+                if (listData) {
+                    allSuggestions.push(...listData.data.map(item => item.name));
+                }
             }
+            return allSuggestions;
+        }
+
+        function updateBonusSuggestions(suggestions) {
+            // Display the suggestions in a dropdown or any other way you prefer
+            console.log('Suggestions:', suggestions);
         }
 
         window.addEventListener('load', function () {
@@ -102,47 +131,6 @@
                 }
             }
         });
-
-        // Combine names from all list.txt files
-        const allNames = getAllNames();
-        
-        // Add event listener for bonus input box
-        const bonusInput = document.getElementById('bonus-input');
-        const suggestionList = document.getElementById('suggestion-list');
-
-        bonusInput.addEventListener('input', function () {
-            const inputValue = bonusInput.value.toLowerCase();
-            const suggestions = getSuggestions(inputValue);
-            displaySuggestions(suggestions);
-        });
-
-        function getSuggestions(input) {
-            return allNames.filter(name => name.toLowerCase().includes(input));
-        }
-
-        function displaySuggestions(suggestions) {
-            suggestionList.innerHTML = '';
-            suggestions.forEach(suggestion => {
-                const suggestionItem = document.createElement('div');
-                suggestionItem.textContent = suggestion;
-                suggestionItem.addEventListener('click', function () {
-                    addToBonusList(suggestion);
-                });
-                suggestionList.appendChild(suggestionItem);
-            });
-        }
-
-        function addToBonusList(name) {
-            const bonusItem = {
-                name: name,
-                url: '' // You can set a default URL or leave it empty
-            };
-            bonusItems.push(bonusItem);
-            updateBonusList();
-            localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
-            bonusInput.value = ''; // Clear input after adding to the bonus list
-            suggestionList.innerHTML = ''; // Clear suggestion list
-        }
 
         function updateBonusList() {
             const bonusList = document.getElementById('bonus-list');
