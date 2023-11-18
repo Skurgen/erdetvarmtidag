@@ -54,7 +54,7 @@
                     <ul id="generated-list"></ul>
                 </div>
             </div>
-         </div>
+        </div>
         <div class="right-column">
             <!-- Add the input text box above the "Bonus List" -->
             <input type="text" id="bonus-input" placeholder="Search Bonus Items">
@@ -66,8 +66,6 @@
                     <!-- Bonus items (if needed) can be added here -->
                 </ul>
             </div>
-            <!-- Add the Add button -->
-            <button id="add-to-bonus-button" onclick="addToBonusList()">Add to Bonus List</button>
         </div>
     </div>
 
@@ -120,8 +118,7 @@
                 const suggestionItem = document.createElement('li');
                 suggestionItem.textContent = suggestion;
                 suggestionItem.addEventListener('click', function () {
-                    bonusInput.value = suggestion;
-                    suggestionList.innerHTML = ''; // Clear suggestions
+                    addToBonusList(suggestion);
                 });
                 suggestionList.appendChild(suggestionItem);
             });
@@ -158,17 +155,6 @@
                     link.target = "_blank"; // Open in a new tab
                     listItem.appendChild(link);
 
-                    const addButton = document.createElement('button');
-                    addButton.textContent = '+';
-                    addButton.style.fontSize = '12px'; // Smaller font size
-                    addButton.style.padding = '2px 4px'; // Smaller padding
-                    addButton.addEventListener('click', function () {
-                        bonusItems.push(randomItem);
-                        updateBonusList();
-                        localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
-                    });
-                    listItem.appendChild(addButton);
-
                     generatedList.appendChild(listItem);
                 }
             }
@@ -187,17 +173,6 @@
                 bonusLink.target = "_blank"; // Open in a new tab
                 bonusListItem.appendChild(bonusLink);
 
-                const minusButton = document.createElement('button');
-                minusButton.textContent = '-';
-                minusButton.style.fontSize = '12px'; // Smaller font size
-                minusButton.style.padding = '2px 4px'; // Smaller padding
-                minusButton.addEventListener('click', function () {
-                    bonusItems.splice(i, 1);
-                    updateBonusList();
-                    localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
-                });
-
-                bonusListItem.appendChild(minusButton);
                 bonusList.appendChild(bonusListItem);
             }
         }
@@ -220,20 +195,14 @@
             }
         }
 
-        // Add a click event listener to the "Add to Bonus List" button
-        document.getElementById('add-to-bonus-button').addEventListener('click', function () {
-            const bonusInput = document.getElementById('bonus-input');
-            const selectedSuggestion = bonusInput.value.trim();
-
-            if (selectedSuggestion !== '') {
-                const bonusItem = findBonusItem(selectedSuggestion);
-                if (bonusItem) {
-                    bonusItems.push(bonusItem);
-                    updateBonusList();
-                    localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
-                }
+        function addToBonusList(itemName) {
+            const bonusItem = findBonusItem(itemName);
+            if (bonusItem) {
+                bonusItems.push(bonusItem);
+                updateBonusList();
+                localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
             }
-        });
+        }
 
         function findBonusItem(selectedSuggestion) {
             for (let i = 1; i <= 8; i++) {
