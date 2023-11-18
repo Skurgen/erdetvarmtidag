@@ -90,12 +90,19 @@
             const bonusInput = document.getElementById('bonus-input');
             const suggestionList = document.getElementById('suggestion-list');
 
-            bonusInput.addEventListener('input', function () {
+            bonusInput.addEventListener('focus', function () {
                 const searchText = bonusInput.value.toLowerCase();
                 const suggestions = getAllSuggestions().filter(item =>
                     item.toLowerCase().includes(searchText)
                 );
                 updateBonusSuggestions(suggestions);
+            });
+
+            document.addEventListener('click', function (event) {
+                if (!bonusInput.contains(event.target)) {
+                    // Clicked outside the input box, clear suggestions
+                    suggestionList.innerHTML = '';
+                }
             });
         });
 
