@@ -79,53 +79,51 @@
         const bonusItems = [];
         const selectedLists = [];
 
-        // Ensure the script runs after the DOM has fully loaded
-      document.addEventListener('DOMContentLoaded', function () {
-        const bonusInput = document.getElementById('bonus-input');
-        const suggestionList = document.getElementById('suggestion-list');
-
-        bonusInput.addEventListener('input', function () {
-            const searchText = bonusInput.value.toLowerCase();
-            const suggestions = getAllSuggestions().filter(item =>
-                item.toLowerCase().includes(searchText)
-            );
-            updateBonusSuggestions(suggestions);
-        });
-    });
-
-    function getAllSuggestions() {
-        const allSuggestions = [];
-        for (let i = 1; i <= 8; i++) {
-            const listData = selectedLists.find(list => list.name === `list${i}`);
-            if (listData) {
-                allSuggestions.push(...listData.data.map(item => item.name));
+        document.addEventListener('DOMContentLoaded', async function () {
+            for (let i = 1; i <= 8; i++) {
+                const listData = await loadList(`list${i}.txt`);
+                selectedLists.push({ name: `list${i}`, data: listData });
             }
-        }
-        return allSuggestions;
-    }
+        });
 
-    function updateBonusSuggestions(suggestions) {
-        const suggestionList = document.getElementById('suggestion-list');
-        suggestionList.innerHTML = '';
+        document.addEventListener('DOMContentLoaded', function () {
+            const bonusInput = document.getElementById('bonus-input');
+            const suggestionList = document.getElementById('suggestion-list');
 
-        suggestions.forEach(suggestion => {
-            const suggestionItem = document.createElement('li');
-            suggestionItem.textContent = suggestion;
-            suggestionItem.addEventListener('click', function () {
-                bonusInput.value = suggestion;
-                suggestionList.innerHTML = ''; // Clear suggestions
+            bonusInput.addEventListener('input', function () {
+                const searchText = bonusInput.value.toLowerCase();
+                const suggestions = getAllSuggestions().filter(item =>
+                    item.toLowerCase().includes(searchText)
+                );
+                updateBonusSuggestions(suggestions);
             });
-            suggestionList.appendChild(suggestionItem);
         });
-    }
 
-        window.addEventListener('load', function () {
-            const storedBonusItems = localStorage.getItem('bonusItems');
-            if (storedBonusItems) {
-                bonusItems.push(...JSON.parse(storedBonusItems));
-                updateBonusList();
+        function getAllSuggestions() {
+            const allSuggestions = [];
+            for (let i = 1; i <= 8; i++) {
+                const listData = selectedLists.find(list => list.name === `list${i}`);
+                if (listData) {
+                    allSuggestions.push(...listData.data.map(item => item.name));
+                }
             }
-        });
+            return allSuggestions;
+        }
+
+        function updateBonusSuggestions(suggestions) {
+            const suggestionList = document.getElementById('suggestion-list');
+            suggestionList.innerHTML = '';
+
+            suggestions.forEach(suggestion => {
+                const suggestionItem = document.createElement('li');
+                suggestionItem.textContent = suggestion;
+                suggestionItem.addEventListener('click', function () {
+                    bonusInput.value = suggestion;
+                    suggestionList.innerHTML = ''; // Clear suggestions
+                });
+                suggestionList.appendChild(suggestionItem);
+            });
+        }
 
         document.getElementById('generate-button').addEventListener('click', async function () {
             const generatedList = document.getElementById('generated-list');
