@@ -66,6 +66,8 @@
                     <!-- Bonus items (if needed) can be added here -->
                 </ul>
             </div>
+            <!-- Add the Add button -->
+            <button id="add-to-bonus-button" onclick="addToBonusList()">Add to Bonus List</button>
         </div>
     </div>
 
@@ -216,6 +218,34 @@
                 console.error('Error loading the file:', error);
                 return [];
             }
+        }
+
+        // Add a click event listener to the "Add to Bonus List" button
+        document.getElementById('add-to-bonus-button').addEventListener('click', function () {
+            const bonusInput = document.getElementById('bonus-input');
+            const selectedSuggestion = bonusInput.value.trim();
+
+            if (selectedSuggestion !== '') {
+                const bonusItem = findBonusItem(selectedSuggestion);
+                if (bonusItem) {
+                    bonusItems.push(bonusItem);
+                    updateBonusList();
+                    localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
+                }
+            }
+        });
+
+        function findBonusItem(selectedSuggestion) {
+            for (let i = 1; i <= 8; i++) {
+                const listData = selectedLists.find(list => list.name === `list${i}`);
+                if (listData) {
+                    const foundItem = listData.data.find(item => item.name === selectedSuggestion);
+                    if (foundItem) {
+                        return foundItem;
+                    }
+                }
+            }
+            return null;
         }
     </script>
 </body>
