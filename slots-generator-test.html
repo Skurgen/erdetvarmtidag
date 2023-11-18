@@ -97,7 +97,7 @@
         function getAllSuggestions() {
             const allSuggestions = [];
             for (let i = 1; i <= 8; i++) {
-                const listData = selectedLists.find(list => list.name === `list${i}`);
+                const listData = selectedLists.find(list => list.name === `list${i}.txt`);
                 if (listData) {
                     allSuggestions.push(...listData.data.map(item => item.name));
                 }
