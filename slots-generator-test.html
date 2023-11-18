@@ -80,45 +80,44 @@
         const selectedLists = [];
 
         // Ensure the script runs after the DOM has fully loaded
-        document.addEventListener('DOMContentLoaded', function () {
-            // Add an event listener for the bonus input
-            const bonusInput = document.getElementById('bonus-input');
-            const suggestionList = document.getElementById('suggestion-list');
+      document.addEventListener('DOMContentLoaded', function () {
+        const bonusInput = document.getElementById('bonus-input');
+        const suggestionList = document.getElementById('suggestion-list');
 
-            bonusInput.addEventListener('input', function () {
-                const searchText = bonusInput.value.toLowerCase();
-                const suggestions = getAllSuggestions().filter(item =>
-                    item.toLowerCase().includes(searchText)
-                );
-                updateBonusSuggestions(suggestions);
-            });
+        bonusInput.addEventListener('input', function () {
+            const searchText = bonusInput.value.toLowerCase();
+            const suggestions = getAllSuggestions().filter(item =>
+                item.toLowerCase().includes(searchText)
+            );
+            updateBonusSuggestions(suggestions);
         });
+    });
 
-        function getAllSuggestions() {
-            const allSuggestions = [];
-            for (let i = 1; i <= 8; i++) {
-                const listData = selectedLists.find(list => list.name === `list${i}.txt`);
-                if (listData) {
-                    allSuggestions.push(...listData.data.map(item => item.name));
-                }
+    function getAllSuggestions() {
+        const allSuggestions = [];
+        for (let i = 1; i <= 8; i++) {
+            const listData = selectedLists.find(list => list.name === `list${i}`);
+            if (listData) {
+                allSuggestions.push(...listData.data.map(item => item.name));
             }
-            return allSuggestions;
         }
+        return allSuggestions;
+    }
 
-        function updateBonusSuggestions(suggestions) {
-            const suggestionList = document.getElementById('suggestion-list');
-            suggestionList.innerHTML = '';
+    function updateBonusSuggestions(suggestions) {
+        const suggestionList = document.getElementById('suggestion-list');
+        suggestionList.innerHTML = '';
 
-            suggestions.forEach(suggestion => {
-                const suggestionItem = document.createElement('li');
-                suggestionItem.textContent = suggestion;
-                suggestionItem.addEventListener('click', function () {
-                    bonusInput.value = suggestion;
-                    suggestionList.innerHTML = ''; // Clear suggestions
-                });
-                suggestionList.appendChild(suggestionItem);
+        suggestions.forEach(suggestion => {
+            const suggestionItem = document.createElement('li');
+            suggestionItem.textContent = suggestion;
+            suggestionItem.addEventListener('click', function () {
+                bonusInput.value = suggestion;
+                suggestionList.innerHTML = ''; // Clear suggestions
             });
-        }
+            suggestionList.appendChild(suggestionItem);
+        });
+    }
 
         window.addEventListener('load', function () {
             const storedBonusItems = localStorage.getItem('bonusItems');
