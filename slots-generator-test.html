@@ -173,6 +173,17 @@
                     link.textContent = `${randomList.name}: ${randomItem.name}`;
                     link.target = "_blank"; // Open in a new tab
                     listItem.appendChild(link);
+					
+					const addButton = document.createElement('button');
+                    addButton.textContent = '+';
+                    addButton.style.fontSize = '12px'; // Smaller font size
+                    addButton.style.padding = '2px 4px'; // Smaller padding
+                    addButton.addEventListener('click', function () {
+                        bonusItems.push(randomItem);
+                        updateBonusList();
+                        localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
+                    });
+                    listItem.appendChild(addButton);
 
                     generatedList.appendChild(listItem);
                 }
@@ -191,7 +202,18 @@
                 bonusLink.textContent = `Bonus: ${bonusItem.name}`;
                 bonusLink.target = "_blank"; // Open in a new tab
                 bonusListItem.appendChild(bonusLink);
+				
+				const minusButton = document.createElement('button');
+                minusButton.textContent = '-';
+                minusButton.style.fontSize = '12px'; // Smaller font size
+                minusButton.style.padding = '2px 4px'; // Smaller padding
+                minusButton.addEventListener('click', function () {
+                    bonusItems.splice(i, 1);
+                    updateBonusList();
+                    localStorage.setItem('bonusItems', JSON.stringify(bonusItems));
+                });
 
+                bonusListItem.appendChild(minusButton);
                 bonusList.appendChild(bonusListItem);
             }
         }
