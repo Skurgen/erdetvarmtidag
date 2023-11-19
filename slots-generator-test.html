@@ -99,7 +99,7 @@
             }
         });
 
-        document.addEventListener('DOMContentLoaded', async function () {
+       document.addEventListener('DOMContentLoaded', async function () {
             for (let i = 1; i <= 8; i++) {
                 const listData = await loadList(`list${i}.txt`);
                 selectedLists.push({ name: `list${i}`, data: listData });
@@ -110,19 +110,12 @@
             const bonusInput = document.getElementById('bonus-input');
             const suggestionList = document.getElementById('suggestion-list');
 
-            bonusInput.addEventListener('focus', function () {
+            bonusInput.addEventListener('input', function () {
                 const searchText = bonusInput.value.toLowerCase();
                 const suggestions = getAllSuggestions().filter(item =>
                     item.toLowerCase().includes(searchText)
                 );
                 updateBonusSuggestions(suggestions);
-            });
-
-            document.addEventListener('click', function (event) {
-                if (!bonusInput.contains(event.target)) {
-                    // Clicked outside the input box, clear suggestions
-                    suggestionList.innerHTML = '';
-                }
             });
         });
 
@@ -137,7 +130,7 @@
             return allSuggestions;
         }
 
-        function updateBonusSuggestions(suggestions) {
+       function updateBonusSuggestions(suggestions) {
             const suggestionList = document.getElementById('suggestion-list');
             suggestionList.innerHTML = '';
 
