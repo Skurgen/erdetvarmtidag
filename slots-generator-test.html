@@ -90,6 +90,14 @@
                 label.classList.add('selected-label');
             }
         }
+		
+		window.addEventListener('load', function () {
+            const storedBonusItems = localStorage.getItem('bonusItems');
+            if (storedBonusItems) {
+                bonusItems.push(...JSON.parse(storedBonusItems));
+                updateBonusList();
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', async function () {
             for (let i = 1; i <= 8; i++) {
