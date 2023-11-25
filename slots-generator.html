@@ -10,11 +10,9 @@
     <div class="container">
         <div class="left-column">
         <h1>Slots Generator</h1>
-            <select id="slot-game" onchange="updateSlotList()">
+           <select id="slot-game" onchange="updateSlotList()">
                 <option value="videoslots">Videoslots</option>
-                <option value="mrvegas">MrVegas</option>
-            </select>
-
+                <option val
         <h2>Select Items:</h2>
             <div class="label-container">
         <label>
@@ -92,7 +90,7 @@
             }
         }
 
-        function updateSlotList() {
+          function updateSlotList() {
             const slotGameSelect = document.getElementById('slot-game');
             const selectedSlotGame = slotGameSelect.value;
 
@@ -104,20 +102,20 @@
 
             // Load lists based on the selected slot game
             if (selectedSlotGame === 'videoslots') {
-                loadLists(1, 8);
+                loadLists('list', 1, 8);
             } else if (selectedSlotGame === 'mrvegas') {
-                loadLists('mr-', 4); // Assuming you have mr-list1.txt to mr-list4.txt
+                loadLists('mr-list', 1, 8); // Assuming you have mr-list1.txt to mr-list4.txt
             }
         }
+        
 
-        function loadLists(prefix, count) {
-            for (let i = 1; i <= count; i++) {
+          function loadLists(prefix, start, end) {
+            for (let i = start; i <= end; i++) {
                 const label = document.getElementById(`list${i}-label`);
                 label.classList.add('unselected-label');
                 label.dataset.prefix = prefix; // Store the prefix in a data attribute
             }
         }
-
         window.addEventListener('load', function () {
             const storedBonusItems = localStorage.getItem('bonusItems');
             if (storedBonusItems) {
@@ -136,7 +134,7 @@
                 const label = document.getElementById(`list${i}-label`);
                 if (label.classList.contains('selected-label')) {
                     const listName = label.textContent;
-                    const listData = await loadList(`list${i}.txt`);
+                    const listData = await loadList(`${listPrefix}${i}.txt`);
                     selectedLists.push({ name: listName, data: listData });
                 }
             }
