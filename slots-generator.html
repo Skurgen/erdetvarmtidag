@@ -135,6 +135,8 @@
                 const label = document.getElementById(`list${i}-label`);
                 if (label.classList.contains('selected-label')) {
                     const listName = label.textContent;
+                    const listLabel = document.getElementById(`list${randomListIndex + 1}-label`);
+                    const listPrefix = listLabel.dataset.prefix;
                     const listData = await loadList(`${listPrefix}${i}.txt`);
                     selectedLists.push({ name: listName, data: listData });
                 }
