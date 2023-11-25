@@ -76,8 +76,28 @@
             window.history.back();
         }
 
+        
+
         const bonusItems = [];
         const selectedLists = [];
+
+
+      function updateSlotList() {
+      var selectedValue = document.getElementById("slot-game").value;
+      var slotList;
+
+      if (selectedValue === "videoslots") {
+        slotList = "list";
+      } else if (selectedValue === "mrvegas") {
+        slotList = "mr-list";
+      } else {
+        // Handle other cases if needed
+        slotList = ""; // Default value
+      }
+
+      // You can use the 'slotList' variable as needed
+      console.log("Selected Slot List:", slotList);
+    }
 
         function toggleSelection(listIndex) {
             const label = document.getElementById(`list${listIndex}-label`);
@@ -91,32 +111,6 @@
             }
         }
 
-          function updateSlotList() {
-            const slotGameSelect = document.getElementById('slot-game');
-            const selectedSlotGame = slotGameSelect.value;
-
-            // Clear existing lists
-            for (let i = 1; i <= 8; i++) {
-                const label = document.getElementById(`list${i}-label`);
-                label.classList.remove('selected-label', 'unselected-label');
-            }
-
-            // Load lists based on the selected slot game
-            if (selectedSlotGame === 'videoslots') {
-                loadLists('list', 1, 8);
-            } else if (selectedSlotGame === 'mrvegas') {
-                loadLists('mr-list', 1, 8); // Assuming you have mr-list1.txt to mr-list4.txt
-            }
-        }
-        
-
-          function loadLists(prefix, start, end) {
-            for (let i = start; i <= end; i++) {
-                const label = document.getElementById(`list${i}-label`);
-                label.classList.add('unselected-label');
-                label.dataset.prefix = prefix; // Store the prefix in a data attribute
-            }
-        }
         window.addEventListener('load', function () {
             const storedBonusItems = localStorage.getItem('bonusItems');
             if (storedBonusItems) {
@@ -135,9 +129,7 @@
                 const label = document.getElementById(`list${i}-label`);
                 if (label.classList.contains('selected-label')) {
                     const listName = label.textContent;
-                    const listLabel = document.getElementById(`list${randomListIndex + 1}-label`);
-                    const listPrefix = listLabel.dataset.prefix;
-                    const listData = await loadList(`${listPrefix}${i}.txt`);
+                    const listData = await loadList(`${slotList}${i}.txt`);
                     selectedLists.push({ name: listName, data: listData });
                 }
             }
